@@ -1,0 +1,1379 @@
+﻿<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Better Economies — What does a better future look like to you?</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['Playfair Display', 'Georgia', 'serif'],
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            cream: '#FBFAF5',
+            sand: '#EDE8D5',
+            forest: '#2D4A22',
+            olive: '#5A7340',
+            terracotta: '#C7753A',
+            gold: '#B8953E',
+            charcoal: '#1E1E1C',
+            muted: '#6B6558',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .page { display: none; }
+    .page.active { display: block; animation: fadeIn 0.5s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+    .animate-float { animation: float 6s ease-in-out infinite; }
+
+    /* Doughnut chips */
+    .chip {
+      position: absolute;
+      background: white;
+      border: 1px solid #EDE8D5;
+      border-radius: 2rem;
+      padding: 0.5rem 1.1rem;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #2D4A22;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+      transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      opacity: 0;
+      transform: scale(0.8) translateY(15px);
+      white-space: nowrap;
+      pointer-events: none;
+    }
+    .chip.visible { opacity: 1; transform: scale(1) translateY(0); }
+
+    /* Perspective cards */
+    .perspective-card {
+      transition: all 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .perspective-card:hover { transform: translateY(-4px); }
+
+    /* Carousel */
+    .carousel-track {
+      transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .carousel-card {
+      flex: 0 0 calc(100% - 0px);
+      scroll-snap-align: start;
+    }
+    @media (min-width: 768px) {
+      .carousel-card { flex: 0 0 calc(50% - 12px); }
+    }
+    @media (min-width: 1024px) {
+      .carousel-card { flex: 0 0 calc(33.333% - 16px); }
+    }
+
+    /* Building block circles */
+    .build-circle {
+      transition: all 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .build-circle .circle-text {
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    .build-circle:hover {
+      transform: scale(1.05);
+      z-index: 10;
+    }
+    .build-circle .hover-reveal {
+      display: none;
+    }
+    .build-circle:hover .hover-reveal {
+      display: block;
+    }
+    .build-circle:hover .circle-icon {
+      opacity: 0.3;
+      transition: all 0.3s ease;
+    }
+    .circle-icon-badge {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    /* Modals */
+    .case-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .case-modal.open {
+      display: flex;
+    }
+    .case-modal-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(30,30,28,0.6);
+      backdrop-filter: blur(4px);
+      animation: fadeIn 0.3s ease;
+    }
+    .case-modal-content {
+      position: relative;
+      background: white;
+      border-radius: 1.5rem;
+      max-width: 640px;
+      width: 100%;
+      max-height: 85vh;
+      overflow-y: auto;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.2);
+      animation: modalIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes modalIn { from { opacity: 0; transform: scale(0.92) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #FBFAF5; }
+    ::-webkit-scrollbar-thumb { background: #C7753A; border-radius: 3px; }
+
+    /* Scroll reveal animations */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s cubic-bezier(0.25, 1, 0.5, 1), transform 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Alternating section backgrounds for visual depth */
+    .section-alt {
+      background: #F7F4EC;
+    }
+
+    /* Stronger card presence */
+    .card-elevated {
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.04);
+    }
+    .card-elevated:hover {
+      box-shadow: 0 1px 2px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.08);
+    }
+
+    /* Section 2 doughnut diagram */
+    .s2-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      fill: #2D4A22;
+      text-anchor: middle;
+    }
+    .s2-sublabel {
+      font-size: 0.6rem;
+      fill: #6B6558;
+      text-anchor: middle;
+    }
+
+    /* ═══════════════════════════════════════════
+       SCROLL REVEAL ANIMATIONS
+       Uses CSS animations so elements always
+       start from the correct keyframe state.
+       ═══════════════════════════════════════════ */
+    .reveal, .reveal-left, .reveal-right, .reveal-scale, .reveal-fade,
+    .stagger-children > * { opacity: 0; }
+
+    @keyframes reveal-up {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes reveal-left {
+      from { opacity: 0; transform: translateX(-30px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes reveal-right {
+      from { opacity: 0; transform: translateX(30px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes reveal-scale {
+      from { opacity: 0; transform: scale(0.92); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+    @keyframes reveal-fade-in {
+      from { opacity: 0; } to { opacity: 1; }
+    }
+
+    .reveal.visible        { animation: reveal-up    0.8s cubic-bezier(0, 0.33, 0.07, 1.03) forwards; }
+    .reveal-left.visible   { animation: reveal-left  0.8s cubic-bezier(0, 0.33, 0.07, 1.03) forwards; }
+    .reveal-right.visible  { animation: reveal-right 0.8s cubic-bezier(0, 0.33, 0.07, 1.03) forwards; }
+    .reveal-scale.visible  { animation: reveal-scale 0.7s cubic-bezier(0, 0.33, 0.07, 1.03) forwards; }
+    .reveal-fade.visible   { animation: reveal-fade-in 0.8s cubic-bezier(0, 0.33, 0.07, 1.03) forwards; }
+    .stagger-children > *.visible {
+      animation: reveal-up 0.6s cubic-bezier(0, 0.33, 0.07, 1.03) forwards;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .reveal.visible, .reveal-left.visible, .reveal-right.visible,
+      .reveal-scale.visible, .reveal-fade.visible, .stagger-children > *.visible {
+        animation: none; opacity: 1; transform: none;
+      }
+    }
+  </style>
+</head>
+<body class="bg-cream text-charcoal font-sans antialiased">
+
+  <!-- ================================================================ -->
+  <!--  HOME PAGE                                                       -->
+  <!-- ================================================================ -->
+  <div id="page-home" class="page active">
+    <section class="min-h-screen flex items-center px-6 lg:px-16 py-16 lg:py-0">
+      <div class="w-full max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+
+        <!-- Left: Text + Cards -->
+        <div>
+          <h1 class="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-forest leading-[1.15] mb-6 reveal-left">
+            What does a <span class="text-terracotta italic">better future</span> look like to you?
+          </h1>
+          <p class="text-lg text-muted mb-10 leading-relaxed max-w-lg reveal-left" style="animation-delay: 0.1s;">
+            A better economy looks different for each of us — until you look at what we all depend on: stable communities, work that sustains us and our families, and the ability to plan beyond next month's bills.
+          </p>
+
+          <p class="text-sm uppercase tracking-widest text-muted/60 mb-5 font-medium reveal-fade" style="animation-delay: 0.25s;">Choose your perspective</p>
+          <div class="flex flex-col gap-4 max-w-md">
+
+            <!-- Perspective 1: Conservative -->
+            <div class="perspective-card group bg-white border border-sand rounded-2xl p-5 cursor-pointer hover:border-forest hover:shadow-xl hover:shadow-forest/5 flex items-center gap-4"
+                 onclick="navigate('conservative')"
+                 onmouseenter="updateDoughnut('conservative')"
+                 onmouseleave="updateDoughnut('default')">
+              <span class="text-2xl flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center bg-forest/5 group-hover:bg-forest/10 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+              <div class="flex-1 min-w-0">
+                <div class="font-semibold text-forest">I want to protect our resources and communities for the long term.</div>
+                <div class="text-sm text-muted/70 mt-0.5">Explore how we can better steward our communities and resources, so they endure.</div>
+              </div>
+              <span class="text-forest/0 group-hover:text-forest/40 text-2xl transition-all transform group-hover:translate-x-1">→</span>
+            </div>
+
+            <!-- Perspective 2: Independent -->
+            <div class="perspective-card group bg-white border border-sand rounded-2xl p-5 cursor-pointer hover:border-gold hover:shadow-xl hover:shadow-gold/5 flex items-center gap-4"
+                 onclick="navigate('independent')"
+                 onmouseenter="updateDoughnut('independent')"
+                 onmouseleave="updateDoughnut('default')">
+              <span class="text-2xl flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center bg-gold/5 group-hover:bg-gold/10 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M5 6l-2 8h4zM19 6l-2 8h4zM8 20h8"/><line x1="3" y1="9" x2="21" y2="9"/></svg></span>
+              <div class="flex-1 min-w-0">
+                <div class="font-semibold text-charcoal group-hover:text-gold transition-colors">I want a stable, innovative economy.</div>
+                <div class="text-sm text-muted/70 mt-0.5">Explore how we can build an economy that balances growth, resilience and opportunity.</div>
+              </div>
+              <span class="text-gold/0 group-hover:text-gold/40 text-2xl transition-all transform group-hover:translate-x-1">→</span>
+            </div>
+
+            <!-- Perspective 3: Progressive -->
+            <div class="perspective-card group bg-white border border-sand rounded-2xl p-5 cursor-pointer hover:border-terracotta hover:shadow-xl hover:shadow-terracotta/5 flex items-center gap-4"
+                 onclick="navigate('progressive')"
+                 onmouseenter="updateDoughnut('progressive')"
+                 onmouseleave="updateDoughnut('default')">
+              <span class="text-2xl flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center bg-terracotta/5 group-hover:bg-terracotta/10 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2l-9 9"/><path d="M14 11L3 21l3-3"/><path d="M15 7l-2 2-3-3 5-5 6 2-3 1z"/><path d="M9 15l-3 3"/></svg></span>
+              <div class="flex-1 min-w-0">
+                <div class="font-semibold text-charcoal group-hover:text-terracotta transition-colors">I want to live in a fairer, more equitable society.</div>
+                <div class="text-sm text-muted/70 mt-0.5">Explore how we can build economic systems that work for everyone.</div>
+              </div>
+              <span class="text-terracotta/0 group-hover:text-terracotta/40 text-2xl transition-all transform group-hover:translate-x-1">→</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Doughnut Visual -->
+        <div class="hidden lg:flex justify-center items-center">
+          <div class="relative w-[420px] h-[420px]">
+            <div class="chip" id="chip-1" style="top:2%; left:5%;"></div>
+            <div class="chip" id="chip-2" style="top:22%; right:-12%;"></div>
+            <div class="chip" id="chip-3" style="bottom:24%; right:-12%;"></div>
+            <div class="chip" id="chip-4" style="bottom:5%; left:0%;"></div>
+            <div class="chip" id="chip-5" style="top:58%; left:-16%;"></div>
+
+            <svg viewBox="0 0 340 340" class="w-full h-full">
+              <circle cx="170" cy="170" r="155" stroke="#5A7340" stroke-width="26" stroke-dasharray="8 4" opacity="0.25" fill="none"/>
+              <circle cx="170" cy="170" r="155" stroke="#5A7340" stroke-width="3" opacity="0.4" fill="none"/>
+              <circle cx="170" cy="170" r="115" stroke="#C7753A" stroke-width="26" opacity="0.12" fill="none"/>
+              <circle cx="170" cy="170" r="115" stroke="#C7753A" stroke-width="3" opacity="0.4" fill="none"/>
+              <circle cx="170" cy="170" r="70" fill="#2D4A22" opacity="0.05"/>
+            </svg>
+
+            <div class="absolute inset-0 flex flex-col items-center justify-center text-center p-10 pointer-events-none">
+              <span id="ring-title" class="font-serif text-xl font-bold text-forest leading-tight transition-opacity duration-300">Hover on a<br>perspective</span>
+              <span id="ring-sub" class="text-xs text-muted uppercase tracking-[0.12em] mt-3 transition-opacity duration-300">that resonates with you</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ================================================================ -->
+  <!--  CONSERVATIVE PAGE                                               -->
+  <!-- ================================================================ -->
+  <div id="page-conservative" class="page">
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-cream/90 backdrop-blur-md border-b border-sand/50">
+      <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+        <button onclick="navigate('home')" class="flex items-center gap-2 text-forest font-semibold hover:text-terracotta transition-colors text-sm">
+          <span class="text-lg">←</span> Back
+        </button>
+        <span class="text-xs uppercase tracking-[0.15em] text-muted/60 font-medium">A guide to a better future</span>
+      </div>
+    </header>
+
+    <!-- Hero + Validation -->
+    <section class="relative overflow-hidden bg-gradient-to-b from-forest/5 to-transparent">
+      <div class="max-w-6xl mx-auto px-6 pt-16 pb-8 text-center">
+        <h1 class="font-serif text-4xl sm:text-5xl font-bold text-forest leading-[1.15] mb-4 reveal">
+          Protecting Resources<br>& Communities
+        </h1>
+        <p class="text-xl text-muted max-w-2xl mx-auto leading-relaxed reveal" style="animation-delay: 0.1s;">
+          Building a better future starts with taking care of what we have. We need a stable economy that values what lasts over what is wasteful, and preserves the American dream for present and future generations.
+        </p>
+      </div>
+    </section>
+
+    <!-- Browse Topics -->
+    <div class="max-w-6xl mx-auto px-6 pb-8 reveal-fade" style="animation-delay: 0.3s;">
+      <div class="flex flex-wrap justify-center gap-2">
+        <button onclick="scrollToSection('con-section1')" class="px-4 py-2 bg-white border border-sand rounded-full text-sm text-muted hover:border-forest hover:text-forest transition-colors">The Vision</button>
+        <button onclick="scrollToSection('con-section2')" class="px-4 py-2 bg-white border border-sand rounded-full text-sm text-muted hover:border-forest hover:text-forest transition-colors">The Formula</button>
+        <button onclick="scrollToSection('con-section4')" class="px-4 py-2 bg-white border border-sand rounded-full text-sm text-muted hover:border-forest hover:text-forest transition-colors">Building Blocks of Better Economies</button>
+        <button onclick="scrollToSection('con-section3')" class="px-4 py-2 bg-white border border-sand rounded-full text-sm text-muted hover:border-forest hover:text-forest transition-colors">Real-World Examples</button>
+        <button onclick="scrollToSection('con-section5')" class="px-4 py-2 bg-white border border-sand rounded-full text-sm text-muted hover:border-forest hover:text-forest transition-colors">Take Action</button>
+      </div>
+    </div>
+
+    <!-- Section 1: The future you can have --><!-- Section 1: The future you can have -->
+    <section id="con-section1" class="relative max-w-7xl mx-auto px-6 py-16">
+      <div class="relative rounded-3xl overflow-hidden" style="background: linear-gradient(135deg, #1a3a0f 0%, #2d4a22 30%, #3d5a2a 60%, #5a7a40 100%);" class="reveal-scale">
+        <div class="absolute inset-0 opacity-25 mix-blend-overlay" style="background-image: url('images/photo-1500382017468-9049fed747ef.jpg'); background-size: cover; background-position: center;"></div>
+        <div class="relative z-10 p-10 sm:p-16 text-center text-white">
+          <h2 class="font-serif text-3xl sm:text-4xl font-bold mb-8 reveal">The Vision</h2>
+          <div class="max-w-3xl mx-auto space-y-5 text-lg leading-relaxed text-white/90">
+            <p>Close your eyes and imagine: You come home from a job that pays enough to live and build a future on. Family-owned restaurants and stores thrive, and your own career is stable, because your town believes in people who take initiative. Your neighbor could afford to buy a house on their teacher's salary. When you need medical care, you can get it without financial panic. Healthy food is available, some of it grown by local farmers. Kids can play outside and breathe clean air, and they can swim in the river if they choose to, because it's free from toxic pollutants.</p>
+            <p class="font-medium text-white">This is what a better economy can deliver: <em>a future you can count on</em>, where the basics of a good quality of life are within reach, and nothing is needlessly wasted.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: The Sweet Spot -->
+    <section id="con-section2" class="max-w-7xl mx-auto px-6 py-16 border-t border-sand/50">
+      <h2 class="font-serif text-3xl font-bold text-forest mb-4 reveal">The Formula</h2>
+      <p class="text-lg text-muted mb-10 max-w-2xl reveal" style="animation-delay: 0.15s;">We need smart investments in America's workforce, economy and future.</p>
+
+      <!-- Two columns: key concepts side by side -->
+      <div class="grid lg:grid-cols-2 gap-8 mb-10 reveal">
+        <!-- Left: Two sectors, pulling together -->
+        <div class="bg-white border border-sand/80 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
+          <span class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-forest/10 text-forest"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 7 6l4 3.5V19H3z"/><path d="M10.5 9.5 14 6l3.5 3.5V19h-7z"/><path d="M18 10l3 2v7h-4"/><line x1="7" y1="19" x2="7" y2="14"/><line x1="14" y1="19" x2="14" y2="14"/></svg></span>
+          <h4 class="font-semibold text-forest text-base mt-3 mb-2">Two sectors, pulling together</h4>
+          <p class="text-sm text-muted leading-relaxed">A strong economy needs two sectors pulling in the same direction. Businesses drive innovation and job creation. The government builds and maintains the foundations private enterprise depends on — highways, power grids, ports, water infrastructure.</p>
+        </div>
+
+        <!-- Right: Smart investments pay off -->
+        <div class="bg-white border border-sand/80 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
+          <span class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-forest/10 text-forest"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
+          <h4 class="font-semibold text-forest text-base mt-3 mb-2">Smart investments pay off</h4>
+          <p class="text-sm text-muted leading-relaxed">Well-funded schools help companies find skilled workers. A more comprehensive health system means more people can actually show up to work. Reliable childcare means parents stay in the workforce, businesses retain talent and grow, while families stay financially stable. These aren't blank checks — they're targeted government investments that make up the foundation of a productive economy, and when done right, they actually bring in more private investment.</p>
+        </div>
+      </div>
+
+      <!-- Expandable thought bubble -->
+      <div class="reveal">
+        <details class="group bg-white border border-forest/20 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+          <summary class="px-6 py-5 cursor-pointer font-semibold text-forest hover:text-terracotta transition-colors text-base flex items-center justify-between gap-4">
+            <span class="flex items-center gap-3">
+              <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-forest/10 text-forest"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/><circle cx="12" cy="12" r="4"/></svg></span>
+              Why is governmental investment important now, even with inflation and growing deficits?
+            </span>
+            <span class="text-xs text-muted/50 group-open:hidden flex-shrink-0">Read more ↓</span>
+            <span class="text-xs text-muted/50 hidden group-open:inline flex-shrink-0">Read less ↑</span>
+          </summary>
+          <div class="px-6 pb-6 space-y-4 text-muted leading-relaxed text-sm">
+            <p>A good business invests early on in the tools, equipment and workers it needs to operate. The same logic applies to an economy. Skilled workers, healthy communities, and reliable infrastructure are the tools that allow individuals, families and businesses to thrive tomorrow.</p>
+            <p>These investments are also fiscally responsible. Research shows that America works best when families have stable homes and reliable childcare. The Center for Outcomes Research and Education found that safe, affordable housing cuts Medicare costs by 12% (roughly $48 per person per month), and all taxpayers benefit from that. In one study group, that translated to $936,000 in annual healthcare savings.</p>
+            <p>Every economy has limits. Fall short of one, and people lack the basics they need to live and contribute: good work, shelter, healthcare, education. Overshoot the other, and you deplete the resources that make everything else possible. The sweet spot is the space in-between, where:</p>
+            <ul class="space-y-2 ml-6" style="list-style-type: disc;">
+              <li>Hard work actually sustains families, and the people who build our communities can afford to live in them</li>
+              <li>We invest in what lasts and manage our resources wisely, instead of mortgaging the future</li>
+              <li>Children and youth inherit abundance, opportunity and prosperity, not debt</li>
+              <li>Our land and water are stewarded responsibly, conserving our natural heritage while supporting American jobs, farmers, ranchers, and energy producers</li>
+            </ul>
+            <p>Some of us have experienced it firsthand. During America's greatest period of middle-class growth and infrastructure development (1940s–1960s), we made smart investments in infrastructure (Interstate Highway System), healthcare and education, which strengthened the country and built the broad-based prosperity we inherited. We empowered workers, supported businesses, and connected communities. We created opportunities for families to thrive and for American enterprise to grow, showing that when the government acts wisely, it can help unlock the full potential of our people.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- Section 4: Building Blocks (hover circles) -->
+    <section id="con-section4" class="max-w-6xl mx-auto px-6 py-16 border-t border-sand/50">
+      <h2 class="font-serif text-3xl font-bold text-forest mt-2 mb-10 reveal">Building Blocks of Better Economies</h2>
+      <div class="flex flex-wrap justify-center gap-4 lg:gap-6 stagger-children">
+        <div class="build-circle relative w-36 h-36 sm:w-40 sm:h-40 rounded-full bg-white border-2 border-forest/20 shadow-md flex flex-col items-center justify-center cursor-pointer group">
+          <div class="w-11 h-11 rounded-full bg-forest/10 flex items-center justify-center group-hover:bg-forest group-hover:text-white transition-all duration-300"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22v-9"/><path d="M4.2 10.8C3 9.5 2 7.8 2 6c0 0 4-4 10-4s10 4 10 4c0 1.8-1 3.5-2.2 4.8"/><path d="M12 13C8 13 5 10 4 7c3 0 6 1 8 6zM12 13c4 0 7-3 8-6-3 0-6 1-8 6z"/></svg></div>
+          <span class="text-xs font-semibold text-forest mt-2 text-center px-2">Resource Conservation</span>
+          <div class="hover-reveal absolute -bottom-2 left-1/2 -translate-x-1/2 translate-y-full bg-forest text-white text-xs rounded-xl px-4 py-3 w-56 text-center shadow-xl z-20">
+            Protecting land, water, and natural capital so our grandchildren inherit sustainable abundance, not scarcity.
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full w-3 h-3 bg-forest" style="clip-path: polygon(50% 0%, 0% 100%, 100% 100%);"></div>
+          </div>
+        </div>
+        <div class="build-circle relative w-36 h-36 sm:w-40 sm:h-40 rounded-full bg-white border-2 border-forest/20 shadow-md flex flex-col items-center justify-center cursor-pointer group">
+          <div class="w-11 h-11 rounded-full bg-charcoal/5 text-charcoal flex items-center justify-center group-hover:bg-charcoal group-hover:text-white transition-all duration-300"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 7 6l4 3.5V19H3z"/><path d="M10.5 9.5 14 6l3.5 3.5V19h-7z"/><path d="M18 10l3 2v7h-4"/><line x1="7" y1="19" x2="7" y2="14"/><line x1="14" y1="19" x2="14" y2="14"/></svg></div>
+          <span class="text-xs font-semibold text-forest mt-1.5 text-center px-2">Local Economies</span>
+          <div class="hover-reveal absolute -bottom-2 left-1/2 -translate-x-1/2 translate-y-full bg-forest text-white text-xs rounded-xl px-4 py-3 w-56 text-center shadow-xl z-20">
+            Supporting local businesses to keep wealth and decision-making in communities, not extracted by foreign corporations.
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full w-3 h-3 bg-forest" style="clip-path: polygon(50% 0%, 0% 100%, 100% 100%);"></div>
+          </div>
+        </div>
+        <div class="build-circle relative w-36 h-36 sm:w-40 sm:h-40 rounded-full bg-white border-2 border-forest/20 shadow-md flex flex-col items-center justify-center cursor-pointer group">
+          <div class="w-11 h-11 rounded-full bg-forest/10 text-forest flex items-center justify-center group-hover:bg-forest group-hover:text-white transition-all duration-300"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="6" r="2"/><circle cx="15" cy="6" r="2"/><circle cx="12" cy="17" r="2"/><path d="M5 20v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/><path d="M12 15v-4"/></svg></div>
+          <span class="text-xs font-semibold text-forest mt-1.5 text-center px-2">Family Support</span>
+          <div class="hover-reveal absolute -bottom-2 left-1/2 -translate-x-1/2 translate-y-full bg-forest text-white text-xs rounded-xl px-4 py-3 w-56 text-center shadow-xl z-20">
+            A society where families can build good homes and children are well looked after — which is also what makes a strong economy.
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full w-3 h-3 bg-forest" style="clip-path: polygon(50% 0%, 0% 100%, 100% 100%);"></div>
+          </div>
+        </div>
+        <div class="build-circle relative w-36 h-36 sm:w-40 sm:h-40 rounded-full bg-white border-2 border-forest/20 shadow-md flex flex-col items-center justify-center cursor-pointer group">
+          <div class="w-11 h-11 rounded-full bg-charcoal/5 text-charcoal flex items-center justify-center group-hover:bg-charcoal group-hover:text-white transition-all duration-300"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+          <span class="text-xs font-semibold text-forest mt-1.5 text-center px-2">Community Resilience</span>
+          <div class="hover-reveal absolute -bottom-2 left-1/2 -translate-x-1/2 translate-y-full bg-forest text-white text-xs rounded-xl px-4 py-3 w-56 text-center shadow-xl z-20">
+            Building capacity to weather economic storms locally.
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full w-3 h-3 bg-forest" style="clip-path: polygon(50% 0%, 0% 100%, 100% 100%);"></div>
+          </div>
+        </div>
+        <div class="build-circle relative w-36 h-36 sm:w-40 sm:h-40 rounded-full bg-white border-2 border-forest/20 shadow-md flex flex-col items-center justify-center cursor-pointer group">
+          <div class="w-11 h-11 rounded-full bg-charcoal/5 text-charcoal flex items-center justify-center group-hover:bg-charcoal group-hover:text-white transition-all duration-300"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20h10"/><path d="M12 20V10"/><path d="M8 14c0-4 3-6 4-8s4 4 4 8"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg></div>
+          <span class="text-xs font-semibold text-forest mt-1.5 text-center px-2">Responsible Agriculture</span>
+          <div class="hover-reveal absolute -bottom-2 left-1/2 -translate-x-1/2 translate-y-full bg-forest text-white text-xs rounded-xl px-4 py-3 w-56 text-center shadow-xl z-20">
+            Farming and food systems that honor the land, protect family farms, and ensure healthy soil and strong rural communities for generations.
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full w-3 h-3 bg-forest" style="clip-path: polygon(50% 0%, 0% 100%, 100% 100%);"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: See it in Action -->
+    <section id="con-section3" class="max-w-6xl mx-auto px-6 py-16 border-t border-sand/50">
+      <h2 class="font-serif text-3xl font-bold text-forest mb-2 reveal">Real-World Examples</h2>
+      <p class="text-muted mb-10 reveal" style="animation-delay: 0.1s;">Examples of better economies working in the real world</p>
+
+      <div class="grid md:grid-cols-3 gap-6 stagger-children">
+          <!-- Michigan -->
+          <div class="carousel-card bg-white border border-sand rounded-2xl overflow-hidden flex-shrink-0 shadow-sm hover:shadow-lg transition-shadow snap-start">
+            <div class="h-40 bg-cover bg-center" style="background-image: url('images/bottle-deposit-vending-machine-adobe-stock.jpeg'); background-color: #3a5a8c;"></div>
+            <div class="p-5">
+              <p class="text-xs text-muted/60 font-medium mb-1">Michigan, USA</p>
+              <h3 class="font-serif text-lg font-bold text-forest mb-2">Turning Waste Into Value</h3>
+              <p class="text-sm text-muted leading-relaxed line-clamp-3 mb-3">Michigan's 1976 bottle bill created a 10¢ deposit system. Return rates hit 95-99%, and $275.7 million was refunded to consumers in 2024 alone.</p>
+              <button onclick="openCaseModal('con-case1')" class="text-xs text-forest font-semibold hover:text-terracotta transition-colors">Learn more →</button>
+            </div>
+          </div>
+
+          <!-- Pennsylvania -->
+          <div class="carousel-card bg-white border border-sand rounded-2xl overflow-hidden flex-shrink-0 shadow-sm hover:shadow-lg transition-shadow snap-start">
+            <div class="h-40 bg-cover bg-center" style="background-image: url('images/pennsylvania families and workforce.jpg'); background-color: #5a6040;"></div>
+            <div class="p-5">
+              <p class="text-xs text-muted/60 font-medium mb-1">Pennsylvania, USA</p>
+              <h3 class="font-serif text-lg font-bold text-forest mb-2">Strengthening Households</h3>
+              <p class="text-sm text-muted leading-relaxed line-clamp-3 mb-3">Pennsylvania families kept $136 million through expanded childcare tax credits and new employer incentives — treating childcare as an economic issue.</p>
+              <button onclick="openCaseModal('con-case2')" class="text-xs text-forest font-semibold hover:text-terracotta transition-colors">Learn more →</button>
+            </div>
+          </div>
+
+          <!-- Credit Unions -->
+          <div class="carousel-card bg-white border border-sand rounded-2xl overflow-hidden flex-shrink-0 shadow-sm hover:shadow-lg transition-shadow snap-start">
+            <div class="h-40 bg-cover bg-center" style="background-image: url('images/banking.jpg'); background-color: #4a5a40;"></div>
+            <div class="p-5">
+              <p class="text-xs text-muted/60 font-medium mb-1">United States</p>
+              <h3 class="font-serif text-lg font-bold text-forest mb-2">Banking That Works for People</h3>
+              <p class="text-sm text-muted leading-relaxed line-clamp-3 mb-3">Member-owned financial institutions like credit unions show how banking can stay closer to the people it serves — from family farm loans to emergency food bank donations.</p>
+              <button onclick="openCaseModal('con-case3')" class="text-xs text-forest font-semibold hover:text-terracotta transition-colors">Learn more →</button>
+            </div>
+          </div>
+      </div>
+    </section>
+
+    <!-- Case Modals for Conservative -->
+    <div class="case-modal" id="con-case1"><div class="case-modal-backdrop" onclick="closeCaseModal('con-case1')"></div><div class="case-modal-content p-8"><button onclick="closeCaseModal('con-case1')" class="absolute top-4 right-4 text-muted hover:text-charcoal text-xl">×</button><img src="images/bottle-deposit-vending-machine-adobe-stock.jpeg" class="w-full h-48 object-cover rounded-xl mb-5" alt="Michigan" onerror="this.style.display='none'"><span class="text-xs text-forest/60 font-medium">Michigan, USA</span><h3 class="font-serif text-2xl font-bold text-forest mt-2 mb-4">Turning Waste Into Value</h3><div class="space-y-3 text-muted text-sm leading-relaxed"><p>Michigan's bottle bill, enacted in 1976, is a proven, common-sense law that has helped keep our roads, parks, and waterways clean for nearly 50 years. The Michigan Beverage Container Deposit Law requires a 10 cent deposit on certain beverage containers, money that consumers get back when they return them. It's a market-based approach that has made Michigan's program the most effective in the nation. Today, the state legislature is considering whether to expand it, building on a policy that has long protected our natural resources while respecting taxpayers.</p><p>For decades, Michigan's bottle deposit system has demonstrated strong performance and fiscal accountability. Throughout the 1990s and 2000s, return rates consistently ranged between 95-99%, proving how a simple 10-cent incentive can encourage responsibility and keep litter off our streets. Even in more recent years, despite economic shifts and pandemic disruptions, hundreds of millions of dollars are still returned directly to consumers annually. $275.7 million were refunded in 2024 alone. Unclaimed deposits, which come from containers not returned, generate additional funds, with a portion distributed to retailers to offset their operational costs.</p><p>The data shows a long track record of high participation, significant refunds to citizens, and a system that largely sustains itself — reinforcing that Michigan's approach has been both effective and financially disciplined over time.</p><p>States like Oregon, California, Maine, New York, Iowa, Connecticut, Vermont, Hawaii, and Massachusetts have successfully implemented these systems. Their successes highlight the importance of continued support for such initiatives.</p><p class="text-xs text-muted/50 mt-4">Source: <a href="https://www.michigan.gov/egle/about/organization/materials-management/recycling/bottle-deposit" target="_blank" class="underline hover:text-forest">Michigan EGLE — Bottle Deposit Law</a></p></div></div></div>
+    <div class="case-modal" id="con-case2"><div class="case-modal-backdrop" onclick="closeCaseModal('con-case2')"></div><div class="case-modal-content p-8"><button onclick="closeCaseModal('con-case2')" class="absolute top-4 right-4 text-muted hover:text-charcoal text-xl">×</button><img src="images/pennsylvania families and workforce.jpg" class="w-full h-48 object-cover rounded-xl mb-5" alt="Pennsylvania" onerror="this.style.display='none'"><span class="text-xs text-forest/60 font-medium">Pennsylvania, USA</span><h3 class="font-serif text-2xl font-bold text-forest mt-2 mb-4">Strengthening Households</h3><div class="space-y-3 text-muted text-sm leading-relaxed"><p>Pennsylvania families and taxpayers have kept $136 million in their own pockets by making child care more affordable through targeted tax relief. Over the past two years, the state expanded tax credits for working families, and created a new incentive for businesses to help cover employees' child care costs. This approach empowers parents, strengthening families and the workforce.</p><p>Childcare failures hit the economy hard. The U.S. <strong>Chamber of Commerce</strong> Foundation reports that states lose billions each year due to parents being forced out of the workforce. Texas loses $9.39 billion annually, Pennsylvania loses $3.47 billion, Arizona $1.77 billion, Iowa $935 million, and Mississippi $673 million. When parents can't work due to unreliable childcare, productivity drops and states lose economic output, costing families, business, and taxpayers alike.</p><p>Pennsylvania's model shows what it looks like to treat childcare as an economic issue rather than a social one. The new employer incentive brings businesses directly into the picture: when companies invest in their employees' childcare, they get a more stable workforce in return. Paired with expanded family tax credits, this means more parents are able to show up, stay employed, and contribute to a stronger state economy.</p><p class="text-xs text-muted/50 mt-4">Source: <a href="https://www.governor.pa.gov/newsroom/governor-shapiro-signs-into-law-historic-bipartisan-childcare-tax-credit-expanding-access-to-affordable-child-care-for-working-families/" target="_blank" class="underline hover:text-forest">PA Governor's Office — Childcare Tax Credit</a></p></div></div></div>
+    <div class="case-modal" id="con-case3"><div class="case-modal-backdrop" onclick="closeCaseModal('con-case3')"></div><div class="case-modal-content p-8"><button onclick="closeCaseModal('con-case3')" class="absolute top-4 right-4 text-muted hover:text-charcoal text-xl">×</button><img src="images/banking.jpg" class="w-full h-48 object-cover rounded-xl mb-5" alt="Credit Union" onerror="this.style.display='none'"><span class="text-xs text-forest/60 font-medium">United States</span><h3 class="font-serif text-2xl font-bold text-forest mt-2 mb-4">Banking That Works for People</h3><div class="space-y-3 text-muted text-sm leading-relaxed"><p>Member-owned financial institutions like credit unions show how banking can stay closer to the people it serves while still operating in a competitive market. From family farm loans to emergency food bank donations, institutions such as the America First Credit Union offer better rates, and a fundamentally different relationship with the people they serve.</p><p>For families, farmers, and small businesses, these alternatives can offer more personalized service and, in some cases, more flexible lending criteria than larger national banks. This can benefit families struggling with high-interest loans, small businesses turned away for being too risky, and farmers without affordable financing for innovations.</p><p>For example, the America First Credit Union (84 years old and member-owned) provides a range of services including small business lending, family banking, and community support programs, often with a strong local focus. It opens small business accounts in minutes, provides personalized lending, and maintains an emergency reserve.</p><p>The Clean Energy Credit Union is another alternative that aims to make it easier and more affordable for Americans to adopt practical, reliable energy solutions. It provides financing for home energy improvements and efficiency upgrades (geothermal systems, solar panels, etc.), supporting both household cost savings and work for local contractors and installers.</p><p>Lastly, the Bank of North Dakota — established in 1919 — works alongside local banks to support agriculture, student lending, small business growth, and infrastructure financing. Its model highlights how public and private financial institutions can cooperate at the local level to expand access to credit.</p><p>This is how finance looks when communities are both the customers and the investors. A hybrid system of member-owned <strong>credit union</strong>s and public–state banking partnerships with local financial institutions can improve access to credit, lower borrowing costs on mortgages and car loans, expand flexible lending for small businesses, and enable faster emergency lending during economic shocks.</p><p class="text-xs text-muted/50 mt-4">Sources: <a href="https://www.americafirst.com/" target="_blank" class="underline hover:text-forest">America First Credit Union</a> · <a href="https://www.cleanenergycu.org/" target="_blank" class="underline hover:text-forest">Clean Energy Credit Union</a></p></div></div></div>
+
+    <!-- Section 5: Take Action -->
+    <section id="con-section5" class="max-w-6xl mx-auto px-6 py-16 border-t border-sand/50">
+      <h2 class="font-serif text-3xl font-bold text-forest mb-4 reveal">Take Action</h2>
+      <p class="text-lg text-muted mb-10 leading-relaxed reveal" style="animation-delay: 0.15s;">Whether you're a business owner, employee, parent, student, or community member, you can help create an economic future that keeps value in your community and protects what you hold dear.</p>
+      <div class="space-y-3 stagger-children">
+        <details class="group bg-white border border-sand rounded-2xl overflow-hidden">
+          <summary class="px-5 py-4 cursor-pointer font-semibold text-forest hover:text-terracotta transition-colors text-sm flex items-baseline justify-between gap-2 flex-wrap"><span>Work & Wages: <em class="text-sm font-normal text-muted/60 ml-1">Reward effort and build an economy where hard work pays off</em></span><span class="text-xs text-muted/50 group-open:hidden">Read more ↓</span><span class="text-xs text-muted/50 hidden group-open:inline">Read less ↑</span></summary>
+          <div class="px-5 pb-4 space-y-1.5 text-sm text-muted">
+            <p>→ Engage with your local <strong><strong>Chamber of Commerce</strong></strong> or business associations to better understand workforce needs and help shape practical local solutions, such as job training pipelines, childcare supports, and improved hiring pathways.</p>
+            <p>→ If you're an employer, consider offering <strong><strong>flexible work arrangements</strong></strong> and <strong><strong>dependent care support</strong></strong> where possible. The return in loyalty, worker retention, and productivity more than justifies the investment.</p>
+            <p>→ Support or expand <strong><strong>apprenticeship, trade, and skills-based training programs</strong></strong> through local employers, unions, or community colleges to strengthen pathways into well-paying jobs.</p>
+          </div>
+        </details>
+        <details class="group bg-white border border-sand rounded-2xl overflow-hidden">
+          <summary class="px-5 py-4 cursor-pointer font-semibold text-forest hover:text-terracotta transition-colors text-sm flex items-baseline justify-between gap-2 flex-wrap"><span>Money & Local Economy: <em class="text-sm font-normal text-muted/60 ml-1">Spend, invest, and bank with businesses built to last</em></span><span class="text-xs text-muted/50 group-open:hidden">Read more ↓</span><span class="text-xs text-muted/50 hidden group-open:inline">Read less ↑</span></summary>
+          <div class="px-5 pb-4 space-y-1.5 text-sm text-muted">
+            <p>→ Recognize and support businesses that reward hard work, pay fairly, and treat employees with respect. <strong>Worker-owned businesses, cooperatives, and credit unions</strong> tend to be more stable, more accountable, and more rooted in their communities. Use the <a href="https://www.usworker.coop/" target="_blank" class="text-forest underline hover:text-terracotta">USFWC directory</a> to find ones near you.</p>
+            <p>→ Do you own stock? You have power as a shareholder to influence company decisions. <a href="https://www.asyousow.org/" target="_blank" class="text-forest underline hover:text-terracotta">Activate your shareholder influence HERE.</a></p>
+            <p>→ Move your banking to a <strong>credit union</strong>. They reinvest locally and offer lower interest rates on loans, saving you money in the long term. If you are already banking with a <strong>credit union</strong>, attend their meetings so you can influence their direction.</p>
+            <p>→ Choose locally or family-owned businesses over chains when you can, especially for groceries, hardware, and services. Start by shifting one recurring purchase to a local or cooperative business.</p>
+            <p>→ If you're a business owner, source locally. Your financial stability builds community stability.</p>
+            <p>→ Look into <strong>Community Development Financial Institutions</strong> that lend to local businesses where big banks won't. Find one via the <a href="https://www.cdfifund.gov/" target="_blank" class="text-forest underline hover:text-terracotta">CDFI Fund</a>.</p>
+            <p>→ Support <strong><strong>Community Land Trust</strong>s</strong> that keep property in local hands and housing affordable for working families. Organizations like <a href="https://groundedsolutions.org/" target="_blank" class="text-forest underline hover:text-terracotta">Grounded Solutions Network</a> can connect you.</p>
+          </div>
+        </details>
+        <details class="group bg-white border border-sand rounded-2xl overflow-hidden">
+          <summary class="px-5 py-4 cursor-pointer font-semibold text-forest hover:text-terracotta transition-colors text-sm flex items-baseline justify-between gap-2 flex-wrap"><span>Community & Care: <em class="text-sm font-normal text-muted/60 ml-1">Take care of your community</em></span><span class="text-xs text-muted/50 group-open:hidden">Read more ↓</span><span class="text-xs text-muted/50 hidden group-open:inline">Read less ↑</span></summary>
+          <div class="px-5 pb-4 space-y-1.5 text-sm text-muted">
+            <p>→ Show up for your neighbours. Contribute what you can to your immediate community, whether that's skills, transportation, meals, or translation support. You can connect with existing initiatives through <a href="https://www.mutualaidhub.org/" target="_blank" class="text-forest underline hover:text-terracotta">MutualAidHub.org</a>.</p>
+            <p>→ Borrow tools from community libraries instead of buying them. Get quality furniture and tools through <strong>Buy Nothing</strong> groups, <strong>Craigslist</strong>, and <strong>Facebook Marketplace</strong>.</p>
+            <p>→ Start something simple and consistent: a <strong><strong>food pantry rotation</strong></strong>, a <strong>tool library</strong>, a <strong>community board</strong> for needs and offers. Register your <strong>mutual aid</strong> network as a <strong>501c3</strong> or <strong>fiscal sponsorship</strong> project, and submit it to <a href="https://mutualaiddisasterrelief.org/" target="_blank" class="text-forest underline hover:text-terracotta">Mutual Aid Disaster Relief</a> so others can replicate it. Good models spread.</p>
+            <p>→ Connect with local <strong>churches, community centers, or neighborhood groups</strong> running affordable childcare. Support them, volunteer, or donate.</p>
+          </div>
+        </details>
+        <details class="group bg-white border border-sand rounded-2xl overflow-hidden">
+          <summary class="px-5 py-4 cursor-pointer font-semibold text-forest hover:text-terracotta transition-colors text-sm flex items-baseline justify-between gap-2 flex-wrap"><span>Land & Environment: <em class="text-sm font-normal text-muted/60 ml-1">Protect the land and water your community depends on</em></span><span class="text-xs text-muted/50 group-open:hidden">Read more ↓</span><span class="text-xs text-muted/50 hidden group-open:inline">Read less ↑</span></summary>
+          <div class="px-5 pb-4 space-y-1.5 text-sm text-muted">
+            <p>→ Check your area's air and water quality at <a href="https://www.airnow.gov/" target="_blank" class="text-forest underline hover:text-terracotta">AirNow.gov</a> or the <a href="https://www.epa.gov/myenvironment" target="_blank" class="text-forest underline hover:text-terracotta">EPA's MyEnvironment tool</a>.</p>
+            <p>→ Show up to <strong>public comment hearings</strong> when new industrial facilities or zoning changes are proposed near your community. Landowners and residents have standing.</p>
+            <p>→ Ask your city what environmental review process exists before new facilities are permitted. If there isn't one, demand accountability.</p>
+          </div>
+        </details>
+        <details class="group bg-white border border-sand rounded-2xl overflow-hidden">
+          <summary class="px-5 py-4 cursor-pointer font-semibold text-forest hover:text-terracotta transition-colors text-sm flex items-baseline justify-between gap-2 flex-wrap"><span>Civic Power: <em class="text-sm font-normal text-muted/60 ml-1">Your tax dollars, your community, your voice</em></span><span class="text-xs text-muted/50 group-open:hidden">Read more ↓</span><span class="text-xs text-muted/50 hidden group-open:inline">Read less ↑</span></summary>
+          <div class="px-5 pb-4 space-y-1.5 text-sm text-muted">
+            <p>→ Attend a <strong>City Council meeting</strong> where local wage or workforce policies are being debated. As a taxpayer and a neighbor, push for wages and work conditions that make that promise real in your community.</p>
+            <p>→ Ask your City Council to adopt a <strong>local purchasing preference</strong> for city contracts. Taxpayer money should work for taxpayers.</p>
+            <p>→ Contact your state representative about healthcare costs and childcare availability in your community. Find out what practical solutions your state is working on and add your input.</p>
+            <p>→ Check if your city has a <strong>participatory budgeting</strong> program at <a href="https://www.participatorybudgeting.org/" target="_blank" class="text-forest underline hover:text-terracotta">participatorybudgeting.org</a>. If it does, use it. If your city doesn't have one, ask your council member why not, and point to Denver as a model that is already working.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    </div>
+
+  <!-- ================================================================ -->
+  <!--  INDEPENDENT PAGE                                                -->
+  <!-- ================================================================ -->
+  <div id="page-independent" class="page">
+    <header class="sticky top-0 z-50 bg-cream/90 backdrop-blur-md border-b border-sand/50">
+      <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+        <button onclick="navigate('home')" class="flex items-center gap-2 text-charcoal font-semibold hover:text-gold transition-colors text-sm">
+          <span class="text-lg">←</span> Back
+        </button>
+        <span class="text-xs uppercase tracking-[0.15em] text-muted/60 font-medium">A guide to a better future</span>
+      </div>
+    </header>
+
+    <section class="relative overflow-hidden bg-gradient-to-b from-gold/5 to-transparent">
+      <div class="max-w-6xl mx-auto px-6 pt-16 pb-8 text-center">
+        <h1 class="font-serif text-4xl sm:text-5xl font-bold text-charcoal leading-[1.15] mb-4 reveal">
+          A Stable, Balanced<br>Economy
+        </h1>
+        <p class="text-xl text-muted max-w-2xl mx-auto leading-relaxed reveal" style="animation-delay: 0.1s;">
+          A good economy helps people live meaningful, fulfilled lives. We should prioritize happiness, fulfillment, and health over profit alone.
+        </p>
+      </div>
+    </section>
+
+    <!-- Browse Topics -->
+    <div class="max-w-6xl mx-auto px-6 pb-8 reveal-fade" style="animation-delay: 0.3s;">
+      <div class="flex flex-wrap justify-center gap-2">
+        <button onclick="scrollToSection('ind-section1')" class="px-4 py-2 bg-white border border-sand rounded-full text-sm text-muted hover:border-gold hover:text-gold transition-colors">The Vision</button>
+        <button onclick="scrollToSection('ind-section2')" class="px-4 py-2 bg-white border border-sand rounded-full text-sm text-muted hover:border-gold hover:text-gold transition-colors">The Formula</button>
+        <button onclick="scrollToSection('ind-section4')" class="px-4 py-2 bg-white border border-sand rounded-full text-sm text-muted hover:border-gold hover:text-gold transition-colors">Building Blocks of Better Economies</button>
+        <button onclick="scrollToSection('ind-section3')" class="px-4 py-2 bg-white border border-sand rounded-full text-sm text-muted hover:border-gold hover:text-gold transition-colors">Real-World Examples</button>
+        <button onclick="scrollToSection('ind-section5')" class="px-4 py-2 bg-white border border-sand rounded-full text-sm text-muted hover:border-gold hover:text-gold transition-colors">Take Action</button>
+      </div>
+    </div>
+
+    <!-- Section 1: The future you can have --><!-- Section 1: The future you can have -->
+    <section id="ind-section1" class="relative max-w-7xl mx-auto px-6 py-16">
+      <div class="relative rounded-3xl overflow-hidden" style="background: linear-gradient(135deg, #3d3826 0%, #5c4a2a 30%, #7a6a3a 60%, #9a8a50 100%);" class="reveal-scale">
+        <div class="absolute inset-0 opacity-20 mix-blend-overlay" style="background-image: url('images/photo-1524813686514-a57563d77965.jpg'); background-size: cover; background-position: center;"></div>
+        <div class="relative z-10 p-10 sm:p-16 text-center text-white">
+          <h2 class="font-serif text-3xl sm:text-4xl font-bold mb-8 reveal">The Vision</h2>
+          <div class="max-w-3xl mx-auto space-y-5 text-lg leading-relaxed text-white/90">
+            <p>Picture this: At the end of the month, you sit down and look at your finances. You earn enough to live well on, and you still have enough time off to spend quality time with friends and family. Your kids are in good schools that you trust and can afford, and you don't have to spread yourself thin caring for your parents as they age. Healthy food is available and some of it is even state grown. Locally run restaurants and stores thrive downtown, and your own business is stable, supported by economic policies that help entrepreneurs.</p>
+            <p class="font-medium text-white">When the basics are secure — housing, healthcare, decent pay — you can breathe differently. You can think about the future. We deserve an economy that makes it possible for people to lead a meaningful and fulfilling life.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: The Sweet Spot -->
+    <section id="ind-section2" class="max-w-7xl mx-auto px-6 py-16 border-t border-sand/50">
+      <h2 class="font-serif text-3xl font-bold text-charcoal mb-4 reveal">The Formula</h2>
+      <p class="text-lg text-muted mb-8 max-w-2xl">What if we adjusted our priorities, and started measuring success based on collective well-being instead of individual output?</p>
+
+      <!-- The Prosperity Balance Point -->
+      <div class="max-w-2xl mx-auto mb-12 reveal">
+        <p class="text-xs uppercase tracking-widest text-muted/50 font-semibold mb-4 text-center">The Prosperity Balance Point</p>
+        <div class="relative h-6 rounded-full overflow-hidden" style="background: linear-gradient(90deg, #e07050 0%, #d4956a 20%, #b8953e 35%, #7a9a50 50%, #b8953e 65%, #d4956a 80%, #e07050 100%);">
+          <div class="absolute inset-0 flex items-center justify-between px-4 text-[10px] font-bold text-white/80 tracking-wider">
+            <span>SHORTFALL</span>
+            <span style="margin-left:auto;margin-right:auto;">THE SWEET SPOT</span>
+            <span>OVERSHOOT</span>
+          </div>
+        </div>
+        <div class="flex justify-between text-xs text-muted/60 mt-2 px-1">
+          <span class="w-[100px] text-left flex-shrink-0">Not meeting basic needs</span>
+          <span class="flex-1 text-center px-2 max-w-[220px] mx-auto">Building a strong economy while safeguarding the resources future generations depend on.</span>
+          <span class="w-[100px] text-right flex-shrink-0">Depleting resources faster than they renew</span>
+        </div>
+      </div>
+
+      <!-- Three accordions with visible preview text -->
+      <div class="max-w-2xl mx-auto space-y-3 stagger-children">
+        <details class="group bg-white border border-sand rounded-2xl overflow-hidden">
+          <summary class="px-5 py-4 cursor-pointer hover:text-gold transition-colors">
+            <div class="flex items-center justify-between gap-2">
+              <span class="font-semibold text-charcoal text-sm">The Economies We Designed</span>
+              <span class="text-xs text-muted/50 group-open:hidden flex-shrink-0">Read more ↓</span>
+              <span class="text-xs text-muted/50 hidden group-open:inline flex-shrink-0">Read less ↑</span>
+            </div>
+            <p class="text-sm text-muted leading-relaxed mt-2 font-normal">Markets are powerful tools for innovation and prosperity, but like any tool, they work best when guided by rules that align private incentives with the public good. Without clear rules, markets can produce outcomes that even mainstream economic theory recognizes as inefficient or unstable. The laws and policies that we make lay down paths that determine where the economy takes people.</p>
+          </summary>
+          <div class="px-5 pb-4 text-sm text-muted leading-relaxed space-y-2">
+            <p>Right now, our economy leaves too many people stranded: it has increasingly concentrated gains among those already holding significant wealth, while middle class and working families are often left behind. It has prioritized short-term growth over stability, and quick financial returns over broader measures of human flourishing. It has also contributed to boom-bust cycles that strain households and public systems alike, and has placed growing pressure on the natural systems we all depend on.</p>
+          </div>
+        </details>
+        <details class="group bg-white border border-sand rounded-2xl overflow-hidden">
+          <summary class="px-5 py-4 cursor-pointer hover:text-gold transition-colors">
+            <div class="flex items-center justify-between gap-2">
+              <span class="font-semibold text-charcoal text-sm">Rethinking What Success Means</span>
+              <span class="text-xs text-muted/50 group-open:hidden flex-shrink-0">Read more ↓</span>
+              <span class="text-xs text-muted/50 hidden group-open:inline flex-shrink-0">Read less ↑</span>
+            </div>
+            <p class="text-sm text-muted leading-relaxed mt-2 font-normal">Too often we frame our choices as a trade-off between economic strength and strong public services, but in practice, they can reinforce one another. Infrastructure lowers costs for businesses and households alike. Healthcare, education, housing, and childcare help more people participate fully in the workforce and in their communities.</p>
+          </summary>
+          <div class="px-5 pb-4 text-sm text-muted leading-relaxed space-y-2">
+            <p>When people have access to the basics for a good life, we see more individuals in work or thriving at school, more people able to support their families and spend money in the local economy. In that sense, supporting people is not separate from economic performance — it is part of what makes sustained performance possible.</p>
+            <p>What if we started measuring success based on collective well-being, instead of individual output? Efficiency matters, but not when people are excluded from opportunity. Profit matters, but it is strongest when it supports long-term resilience. Growth matters most when its benefits are broadly shared and when it remains compatible with responsible use of resources.</p>
+          </div>
+        </details>
+        <details class="group bg-white border border-sand rounded-2xl overflow-hidden">
+          <summary class="px-5 py-4 cursor-pointer hover:text-gold transition-colors">
+            <div class="flex items-center justify-between gap-2">
+              <span class="font-semibold text-charcoal text-sm">What the Economy Could Look Like</span>
+              <span class="text-xs text-muted/50 group-open:hidden flex-shrink-0">Read more ↓</span>
+              <span class="text-xs text-muted/50 hidden group-open:inline flex-shrink-0">Read less ↑</span>
+            </div>
+            <p class="text-sm text-muted leading-relaxed mt-2 font-normal">We know there is a sweet spot between scarcity and excess, where we can meet everyone's basic needs without overshooting our resources. A better economy isn't about spending more for the sake of spending more — it's about using resources wisely, reducing waste, and investing in the foundations of long-term prosperity.</p>
+          </summary>
+          <div class="px-5 pb-4 text-sm text-muted leading-relaxed space-y-2">
+            <p>This is what balance means: using what we have wisely, giving people a shot at building a good life, and protecting what matters for the next generations. Cities such as Amsterdam and Copenhagen have experimented with long-term planning in areas like housing, transport, and urban design, and are often praised for their strong results in job creation, housing affordability, and environmental quality. The question then is no longer whether it can be done. It's whether we're willing to learn from what is already working.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- Section 4: Building Blocks (hover circles) -->
+    <section id="ind-section4" class="max-w-6xl mx-auto px-6 py-16 border-t border-sand/50">
+      <h2 class="font-serif text-3xl font-bold text-charcoal mt-2 mb-10 reveal">Building Blocks of Better Economies</h2>
+      <div class="flex flex-wrap justify-center gap-4 lg:gap-6 stagger-children">
+        <div class="build-circle relative w-36 h-36 sm:w-40 sm:h-40 rounded-full bg-white border-2 border-gold/30 shadow-md flex flex-col items-center justify-center cursor-pointer group">
+          <div class="w-11 h-11 rounded-full bg-charcoal/5 text-charcoal flex items-center justify-center group-hover:bg-charcoal group-hover:text-white transition-all duration-300"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/><path d="M2 12h3M19 12h3M12 2v3M12 19v3"/></svg></div>
+          <span class="text-xs font-semibold text-charcoal mt-1.5 text-center px-2">Public-Private Partnerships</span>
+          <div class="hover-reveal absolute -bottom-2 left-1/2 -translate-x-1/2 translate-y-full bg-gold text-white text-xs rounded-xl px-4 py-3 w-56 text-center shadow-xl z-20">
+            Smart partnerships that leverage the strengths of both sectors with accountability to solve society's problems efficiently.
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full w-3 h-3 bg-gold" style="clip-path: polygon(50% 0%, 0% 100%, 100% 100%);"></div>
+          </div>
+        </div>
+        <div class="build-circle relative w-36 h-36 sm:w-40 sm:h-40 rounded-full bg-white border-2 border-gold/30 shadow-md flex flex-col items-center justify-center cursor-pointer group">
+          <div class="w-11 h-11 rounded-full bg-charcoal/5 text-charcoal flex items-center justify-center group-hover:bg-charcoal group-hover:text-white transition-all duration-300"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5V20H3z"/><rect x="9" y="14" width="6" height="6"/></svg></div>
+          <span class="text-xs font-semibold text-charcoal mt-1.5 text-center px-2">Thriving Local Communities</span>
+          <div class="hover-reveal absolute -bottom-2 left-1/2 -translate-x-1/2 translate-y-full bg-gold text-white text-xs rounded-xl px-4 py-3 w-56 text-center shadow-xl z-20">
+            Supporting local businesses to keep economic opportunity, wealth-building and decision-making in communities.
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full w-3 h-3 bg-gold" style="clip-path: polygon(50% 0%, 0% 100%, 100% 100%);"></div>
+          </div>
+        </div>
+        <div class="build-circle relative w-36 h-36 sm:w-40 sm:h-40 rounded-full bg-white border-2 border-gold/30 shadow-md flex flex-col items-center justify-center cursor-pointer group">
+          <div class="w-11 h-11 rounded-full bg-charcoal/5 text-charcoal flex items-center justify-center group-hover:bg-charcoal group-hover:text-white transition-all duration-300"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5V20H3z"/><path d="M9 22v-6h6v6"/><path d="M12 12h.01" fill="currentColor"/></svg></div>
+          <span class="text-xs font-semibold text-charcoal mt-1.5 text-center px-2">Affordable Housing & Healthcare</span>
+          <div class="hover-reveal absolute -bottom-2 left-1/2 -translate-x-1/2 translate-y-full bg-gold text-white text-xs rounded-xl px-4 py-3 w-56 text-center shadow-xl z-20">
+            Housing models that balance market forces so families can find homes they can afford. Healthcare that fits in family budgets.
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full w-3 h-3 bg-gold" style="clip-path: polygon(50% 0%, 0% 100%, 100% 100%);"></div>
+          </div>
+        </div>
+        <div class="build-circle relative w-36 h-36 sm:w-40 sm:h-40 rounded-full bg-white border-2 border-gold/30 shadow-md flex flex-col items-center justify-center cursor-pointer group">
+          <div class="w-11 h-11 rounded-full bg-charcoal/5 text-charcoal flex items-center justify-center group-hover:bg-charcoal group-hover:text-white transition-all duration-300"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h5"/><path d="M8 3v2h8V3"/></svg></div>
+          <span class="text-xs font-semibold text-charcoal mt-1.5 text-center px-2">Long-term Planning</span>
+          <div class="hover-reveal absolute -bottom-2 left-1/2 -translate-x-1/2 translate-y-full bg-gold text-white text-xs rounded-xl px-4 py-3 w-56 text-center shadow-xl z-20">
+            Building capacity to weather economic storms, and green systems that save money long-term while protecting the environment.
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full w-3 h-3 bg-gold" style="clip-path: polygon(50% 0%, 0% 100%, 100% 100%);"></div>
+          </div>
+        </div>
+        <div class="build-circle relative w-36 h-36 sm:w-40 sm:h-40 rounded-full bg-white border-2 border-gold/30 shadow-md flex flex-col items-center justify-center cursor-pointer group">
+          <div class="w-11 h-11 rounded-full bg-charcoal/5 text-charcoal flex items-center justify-center group-hover:bg-charcoal group-hover:text-white transition-all duration-300"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22v-9"/><path d="M4.2 10.8C3 9.5 2 7.8 2 6c0 0 4-4 10-4s10 4 10 4c0 1.8-1 3.5-2.2 4.8"/><path d="M12 13C8 13 5 10 4 7c3 0 6 1 8 6zM12 13c4 0 7-3 8-6-3 0-6 1-8 6z"/></svg></div>
+          <span class="text-xs font-semibold text-charcoal mt-1.5 text-center px-2">Environmental Resilience</span>
+          <div class="hover-reveal absolute -bottom-2 left-1/2 -translate-x-1/2 translate-y-full bg-gold text-white text-xs rounded-xl px-4 py-3 w-56 text-center shadow-xl z-20">
+            Protect clean air, clean water, natural resources and energy systems built for resilience.
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full w-3 h-3 bg-gold" style="clip-path: polygon(50% 0%, 0% 100%, 100% 100%);"></div>
+          </div>
+        </div>
+        <div class="build-circle relative w-36 h-36 sm:w-40 sm:h-40 rounded-full bg-white border-2 border-gold/30 shadow-md flex flex-col items-center justify-center cursor-pointer group">
+          <div class="w-11 h-11 rounded-full bg-charcoal/5 text-charcoal flex items-center justify-center group-hover:bg-charcoal group-hover:text-white transition-all duration-300"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg></div>
+          <span class="text-xs font-semibold text-charcoal mt-1.5 text-center px-2">Fair Work & Opportunity</span>
+          <div class="hover-reveal absolute -bottom-2 left-1/2 -translate-x-1/2 translate-y-full bg-gold text-white text-xs rounded-xl px-4 py-3 w-56 text-center shadow-xl z-20">
+            Jobs that provide reliable wages, pathways to career advancement and ownership, and support for small business growth.
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full w-3 h-3 bg-gold" style="clip-path: polygon(50% 0%, 0% 100%, 100% 100%);"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: See it in Action -->
+    <section id="ind-section3" class="max-w-6xl mx-auto px-6 py-16 border-t border-sand/50">
+      <h2 class="font-serif text-3xl font-bold text-charcoal mb-2 reveal">Real-World Examples</h2>
+      <p class="text-muted mb-10 reveal" style="animation-delay: 0.1s;">Examples of better economies working in the real world</p>
+
+      <div class="relative reveal">
+        <div class="flex gap-6 overflow-x-auto pb-4 snap-x snap-mandatory" style="scrollbar-width:none; -ms-overflow-style:none;" id="ind-carousel">
+          <!-- Portland -->
+          <div class="carousel-card bg-white border border-sand rounded-2xl overflow-hidden flex-shrink-0 shadow-sm hover:shadow-lg transition-shadow snap-start">
+            <div class="h-40 bg-cover bg-center" style="background-image: url('images/portland.jpg'); background-color: #3a5a3a;"></div>
+            <div class="p-5">
+              <p class="text-xs text-muted/60 font-medium mb-1">Portland, USA</p>
+              <h3 class="font-serif text-lg font-bold text-charcoal mb-2">Growing Smarter, Not Just Bigger</h3>
+              <p class="text-sm text-muted leading-relaxed line-clamp-3 mb-3">Portland's 1979 Urban Growth Boundary helped the city grow 54% in population while using only 36% more land — preserving millions of acres of farmland and forest.</p>
+              <button onclick="openCaseModal('ind-case2')" class="text-xs text-gold font-semibold hover:text-charcoal transition-colors">Learn more →</button>
+            </div>
+          </div>
+          <!-- Norway -->
+          <div class="carousel-card bg-white border border-sand rounded-2xl overflow-hidden flex-shrink-0 shadow-sm hover:shadow-lg transition-shadow snap-start">
+            <div class="h-40 bg-cover bg-center" style="background-image: url('images/norway.jpg'); background-color: #2a4a5c;"></div>
+            <div class="p-5">
+              <p class="text-xs text-muted/60 font-medium mb-1">Norway</p>
+              <h3 class="font-serif text-lg font-bold text-charcoal mb-2">What Taxes Can Actually Buy</h3>
+              <p class="text-sm text-muted leading-relaxed line-clamp-3 mb-3">The median Norwegian pays ~26% income tax — comparable to many middle-class Americans. But it covers universal healthcare, free education through PhD, and a full year of paid parental leave.</p>
+              <button onclick="openCaseModal('ind-case1')" class="text-xs text-gold font-semibold hover:text-charcoal transition-colors">Learn more →</button>
+            </div>
+          </div>
+          <!-- Romania -->
+          <div class="carousel-card bg-white border border-sand rounded-2xl overflow-hidden flex-shrink-0 shadow-sm hover:shadow-lg transition-shadow snap-start">
+            <div class="h-40 bg-cover bg-center" style="background-image: url('images/Source-RetuRO-SGR.jpeg'); background-color: #4a6040;"></div>
+            <div class="p-5">
+              <p class="text-xs text-muted/60 font-medium mb-1">Romania</p>
+              <h3 class="font-serif text-lg font-bold text-charcoal mb-2">Turning Waste Into Value</h3>
+              <p class="text-sm text-muted leading-relaxed line-clamp-3 mb-3">Romania's Deposit-Return Scheme charges $0.11 per bottle, refunded when returned. Collection rates hit 94% within two years. The scheme is fully self-financing.</p>
+              <button onclick="openCaseModal('ind-case4')" class="text-xs text-gold font-semibold hover:text-charcoal transition-colors">Learn more →</button>
+            </div>
+          </div>
+          <!-- Copenhagen -->
+          <div class="carousel-card bg-white border border-sand rounded-2xl overflow-hidden flex-shrink-0 shadow-sm hover:shadow-lg transition-shadow snap-start">
+            <div class="h-40 bg-cover bg-center" style="background-image: url('images/photo-1513622470522-26c3c8a854bc.jpg'); background-color: #4a5a6a;"></div>
+            <div class="p-5">
+              <p class="text-xs text-muted/60 font-medium mb-1">Copenhagen, Denmark</p>
+              <h3 class="font-serif text-lg font-bold text-charcoal mb-2">Making <em>Green</em> Make Economic Sense</h3>
+              <p class="text-sm text-muted leading-relaxed line-clamp-3 mb-3">District heating covers 98% of demand at 45% lower cost. Every dollar spent on its climate plan generates $85 in private investment. The majority now commutes by bike.</p>
+              <button onclick="openCaseModal('ind-case3')" class="text-xs text-gold font-semibold hover:text-charcoal transition-colors">Learn more →</button>
+            </div>
+          </div>
+        </div>
+        <button onclick="scrollCarousel('ind-carousel', -1)" class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 w-10 h-10 rounded-full bg-white border border-sand shadow-md flex items-center justify-center hover:bg-gold hover:text-white transition-colors text-lg z-10 hidden lg:flex">←</button>
+        <button onclick="scrollCarousel('ind-carousel', 1)" class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 w-10 h-10 rounded-full bg-white border border-sand shadow-md flex items-center justify-center hover:bg-gold hover:text-white transition-colors text-lg z-10 hidden lg:flex">→</button>
+      </div>
+    </section>
+
+    <!-- Case Modals for Independent -->
+    <div class="case-modal" id="ind-case1"><div class="case-modal-backdrop" onclick="closeCaseModal('ind-case1')"></div><div class="case-modal-content p-8"><button onclick="closeCaseModal('ind-case1')" class="absolute top-4 right-4 text-muted hover:text-charcoal text-xl">×</button><img src="images/norway.jpg" class="w-full h-48 object-cover rounded-xl mb-5" alt="Norway" onerror="this.style.display='none'"><span class="text-xs text-gold/70 font-medium">Norway</span><h3 class="font-serif text-2xl font-bold text-charcoal mt-2 mb-4">What Taxes Can Actually Buy</h3><div class="space-y-3 text-muted text-sm leading-relaxed"><p>Many people assume that universal healthcare, free education, and paid parental leave are luxuries our country cannot really afford. Countries like Norway challenge that assumption. According to PWC, the average Norwegian pays around a quarter of their income in taxes, comparable to what many middle-class Americans already pay across federal, state, and local taxes combined. Norway proves that investing in people doesn't have to mean paying dramatically more in taxes, but rather thoughtful choices about how public resources are used.</p><p>People often assume Scandinavian countries have extremely high taxes. In reality, the median Norwegian earner pays around 26% of their income in taxes. That is not dramatically different from what many middle-class Americans pay when you add up federal, state, and local taxes, but what it "buys" is almost incomparable.</p><p>Childbirth is covered through the public healthcare system, and parents receive a full year of paid parental leave. Education is publicly funded through the PhD level. A public livable pension is guaranteed. Annual out-of-pocket healthcare costs are capped at $330, and employees can receive paid sick leave for up to one year to recover from illness or injury.</p><p>The range of services that taxes help provide in Norway is therefore very different. As a result of these policies, Norway consistently ranks among the most innovative, productive, and happiest countries in the world. This shows that, when people are not one medical bill or one job loss away from financial collapse, they take more risks, start more businesses, and contribute more to their communities.</p><p class="text-xs text-muted/50 mt-4">Source: <a href="https://www.ssb.no/en" target="_blank" class="underline hover:text-gold">Statistics Norway</a> · <a href="https://worldhappiness.report/" target="_blank" class="underline hover:text-gold">World Happiness Report</a></p></div></div></div>
+    <div class="case-modal" id="ind-case2"><div class="case-modal-backdrop" onclick="closeCaseModal('ind-case2')"></div><div class="case-modal-content p-8"><button onclick="closeCaseModal('ind-case2')" class="absolute top-4 right-4 text-muted hover:text-charcoal text-xl">×</button><img src="images/portland.jpg" class="w-full h-48 object-cover rounded-xl mb-5" alt="Portland" onerror="this.style.display='none'"><span class="text-xs text-gold/70 font-medium">Portland, USA</span><h3 class="font-serif text-2xl font-bold text-charcoal mt-2 mb-4">Growing Smarter, Not Just Bigger</h3><div class="space-y-3 text-muted text-sm leading-relaxed"><p>In 1979, Portland established a legally mandated line around the city, separating urban development from surrounding rural land. Known as an Urban Growth Boundary, the policy was meant to preserve farmland and natural areas, while fostering more compact, walkable neighborhoods, and good infrastructure at reduced costs for residents. This has made Portland one of the most studied models of future-oriented urban planning in the world, proving that protecting the land outside a city can be one of the smartest investments we can make for the people living inside it.</p><p>The first US urban growth boundary was established in Lexington, Kentucky in 1958. By 1999, the policy was adopted in more than 100 cities, counties, and regions across the country. After establishing the urban growth boundary in 1979, Portland grew by 54% in population over the next two decades, but used only 36% more land to do it. Rather than sprawling outward and using more public funds for new roads and utilities, Portland grew efficiently by concentrating development where infrastructure already existed.</p><p>Portland's urban growth boundary has preserved millions of acres of Oregon farmland and forest, while directing investment back into existing neighborhoods. The result has been a denser, more connected metropolitan area, and a stronger community. Residents in dense, walkable Portland neighborhoods spend significantly less on transportation than the average American household. Portland's experience suggests that thoughtful land-use planning can both support growing cities and help protect the land and resources surrounding them.</p><p class="text-xs text-muted/50 mt-4">Source: <a href="https://www.oregon.gov/lcd/Pages/index.aspx" target="_blank" class="underline hover:text-gold">Oregon Dept. of Land Conservation & Development</a></p></div></div></div>
+    <div class="case-modal" id="ind-case3"><div class="case-modal-backdrop" onclick="closeCaseModal('ind-case3')"></div><div class="case-modal-content p-8"><button onclick="closeCaseModal('ind-case3')" class="absolute top-4 right-4 text-muted hover:text-charcoal text-xl">×</button><img src="images/photo-1513622470522-26c3c8a854bc.jpg" class="w-full h-48 object-cover rounded-xl mb-5" alt="Copenhagen" onerror="this.style.display='none'"><span class="text-xs text-gold/70 font-medium">Copenhagen, Denmark</span><h3 class="font-serif text-2xl font-bold text-charcoal mt-2 mb-4">The City That Made Going Green Make Economic Sense</h3><div class="space-y-3 text-muted text-sm leading-relaxed"><p>In Copenhagen, which aims to become the world's first carbon neutral capital by 2030, residents pay less for energy, commute cheaper, and consistently rank among the happiest people on earth. The city has invested heavily in clean energy, public transit, and bike-friendly infrastructure. These investments have helped maintain a high quality of life, showing that efforts to build a cleaner city can often go hand in hand with making it a more practical, affordable place to live.</p><p>Copenhagen set out to become the world's first carbon-neutral capital by making the sustainable choice the practical one. It made significant investments in transit and cycling infrastructure, and the results speak for themselves: since 2010, transport emissions have dropped by 9%, driven by a 12% increase in cycling. Here, the majority commutes by bike, followed by other forms of public transit.</p><p>The city's energy system tells a compelling story as well. In the 1970s, following the energy crisis, Denmark launched comprehensive heat planning involving municipalities and energy companies in an intensive national effort. Treating heat as a shared resource, more than 98% of demand is now covered by district heating, where the City of Copenhagen pipes hot water from a small number of large plants directly into buildings across the city. Much of the heat comes from burning waste and biomass that would otherwise go to landfill. Their famous waste-to-energy plant, "Copenhill" is not only energy infrastructure, but also a public space, featuring a rooftop ski slope with artificial turf and a 270-foot open-air climbing wall.</p><p>In terms of impact, district heating costs around 45% less than individual oil or heat pump solutions, resulting in lower bills for residents. Overall, every dollar Copenhagen spends on its climate plan generates $85 in private investment elsewhere in the city. This approach created jobs, lowered household costs, and made the city more competitive globally. Denmark consistently ranks among the happiest countries in the world, and Copenhagen is a large reason why. This shows that policies aimed at reducing emissions can also support economic competitiveness and affordability when designed thoughtfully.</p><p class="text-xs text-muted/50 mt-4">Source: <a href="https://urbandevelopmentcph.kk.dk/" target="_blank" class="underline hover:text-gold">City of Copenhagen — Urban Development</a></p></div></div></div>
+    <div class="case-modal" id="ind-case4"><div class="case-modal-backdrop" onclick="closeCaseModal('ind-case4')"></div><div class="case-modal-content p-8"><button onclick="closeCaseModal('ind-case4')" class="absolute top-4 right-4 text-muted hover:text-charcoal text-xl">×</button><img src="images/Source-RetuRO-SGR.jpeg" class="w-full h-48 object-cover rounded-xl mb-5" alt="Romania" onerror="this.style.display='none'"><span class="text-xs text-gold/70 font-medium">Romania</span><h3 class="font-serif text-2xl font-bold text-charcoal mt-2 mb-4">Turning Waste Into Value</h3><div class="space-y-3 text-muted text-sm leading-relaxed"><p>Romania has introduced a recycling system that uses financial incentives to encourage participation, while helping reduce waste. Under its new Deposit-Return Scheme, bottles and cans are sold with a small deposit attached. Return it, get your money back. Keep it, lose it. A bottle that gets returned, washed, and refilled is no longer waste, but a resource. Romanians were throwing away tons of usable materials every year, but in the two years since the scheme was launched, beverage-packaging collection has skyrocketed to as high as 94% in some months.</p><p>Romanians found a way to put money back in people's pockets, cut municipal costs, and clean up their streets, all without government spending. It is a simple scheme: when buying soft drinks or alcoholic beverages, the customer pays an extra $0.11 USD per bottle and gets the money back when returning the packaging, cleaned and in its original shape, to a collection point, in any shop that sells beverages. The results were immediate: within the first year, litter dropped dramatically, and businesses that run the collection points generated revenue.</p><p>The scheme is self-financing. Municipal waste costs fell because less packaging ends up in landfills or on roadsides. This puts money back in people's pockets, reduces costs for local governments, and creates a private sector infrastructure that sustains itself. Romania's successful Deposit-Return Scheme proves that some of the best outcomes come from good incentives, and from equating the right choice to the financially smart one.</p><p class="text-xs text-muted/50 mt-4">Source: <a href="https://returosgr.ro/en/" target="_blank" class="underline hover:text-gold">RetuRO — Romania's Deposit Return System</a></p></div></div></div>
+
+    <!-- Section 5: Take Action -->
+    <section id="ind-section5" class="max-w-6xl mx-auto px-6 py-16 border-t border-sand/50">
+      <h2 class="font-serif text-3xl font-bold text-charcoal mb-4 reveal">Take Action</h2>
+      <p class="text-lg text-muted mb-10 leading-relaxed reveal" style="animation-delay: 0.15s;">Whether you're a business owner, employee, parent, student, or community member, you can help create an economic future that brings more stability, real opportunities, and a genuine chance to thrive.</p>
+      <div class="space-y-3 stagger-children">
+        <details class="group bg-white border border-sand rounded-2xl overflow-hidden">
+          <summary class="px-5 py-4 cursor-pointer font-semibold text-charcoal hover:text-gold transition-colors text-sm flex items-baseline justify-between gap-2 flex-wrap"><span>Work & Wages: <em class="text-sm font-normal text-muted/60 ml-1">Push for an economy where effort actually gets rewarded</em></span><span class="text-xs text-muted/50 group-open:hidden">Read more ↓</span><span class="text-xs text-muted/50 hidden group-open:inline">Read less ↑</span></summary>
+          <div class="px-5 pb-4 space-y-1.5 text-sm text-muted">
+            <p>→ Invest in businesses that treat workers as partners. Use the <a href="https://www.usworker.coop/" target="_blank" class="text-gold underline hover:text-charcoal">USFWC directory</a> to find <strong>worker-owned businesses</strong> near you.</p>
+            <p>→ Leave a Google review praising businesses that pay their people well. It matters more than you think.</p>
+            <p>→ Connect with local business associations or civic groups working on workforce development in your area.</p>
+            <p>→ If you are an employer, provide <strong>dependent care benefits</strong> and <strong>flexible work arrangements</strong>. These policies keep good, loyal workers.</p>
+            <p>→ Push your local <strong>Chamber of Commerce</strong> to treat childcare access as a workforce issue, not just a family issue. When parents can't work, businesses lose too.</p>
+            <p>→ Look into <strong>profit-sharing</strong> or <strong>employee ownership</strong> models through the <a href="https://www.nceo.org/" target="_blank" class="text-gold underline hover:text-charcoal">National Center for Employee Ownership</a>. Businesses that share the rewards tend to be more stable and more rooted in their communities.</p>
+          </div>
+        </details>
+        <details class="group bg-white border border-sand rounded-2xl overflow-hidden">
+          <summary class="px-5 py-4 cursor-pointer font-semibold text-charcoal hover:text-gold transition-colors text-sm flex items-baseline justify-between gap-2 flex-wrap"><span>Money & Local Economy: <em class="text-sm font-normal text-muted/60 ml-1">Direct your money toward what lasts</em></span><span class="text-xs text-muted/50 group-open:hidden">Read more ↓</span><span class="text-xs text-muted/50 hidden group-open:inline">Read less ↑</span></summary>
+          <div class="px-5 pb-4 space-y-1.5 text-sm text-muted">
+            <p>→ Invest in businesses that treat workers as partners. Use the <a href="https://www.usworker.coop/" target="_blank" class="text-gold underline hover:text-charcoal">USFWC directory</a> to find <strong>worker-owned businesses</strong> near you.</p>
+            <p>→ Do you own stock? You have power as a shareholder to influence company decisions. <a href="https://www.asyousow.org/" target="_blank" class="text-gold underline hover:text-charcoal">Activate your shareholder influence HERE.</a></p>
+            <p>→ Ask your bank or pension fund what ESG (Environmental, Social, and Governance) investment options they offer, and push for more. If they don't offer any, consider switching to a financial institution that does.</p>
+            <p>→ Move your banking to a <strong>credit union</strong>. Lower interest rates, local reinvestment, member-owned. If you're already banking with one, attend their meetings and help shape their direction.</p>
+            <p>→ Use <a href="https://maps.google.com/" target="_blank" class="text-gold underline hover:text-charcoal">Google Maps</a> or <a href="https://www.yelp.com/" target="_blank" class="text-gold underline hover:text-charcoal">Yelp</a> filtered to <strong>locally-owned businesses</strong>. Shift one recurring purchase — coffee, groceries, hardware — to a local or cooperative business.</p>
+            <p>→ If you're a business owner, source locally. Your stability builds community stability.</p>
+            <p>→ Open an account with a Community Development Financial Institution. They lend locally where big banks won't. Find one via the <a href="https://www.cdfifund.gov/" target="_blank" class="text-gold underline hover:text-charcoal">cdfifund.gov</a>.</p>
+            <p>→ Support <strong><strong>Community Land Trust</strong>s</strong> in your city. They keep housing permanently affordable and locally rooted. Organizations like <a href="https://groundedsolutions.org/" target="_blank" class="text-gold underline hover:text-charcoal">Grounded Solutions Network</a> can connect you.</p>
+          </div>
+        </details>
+        <details class="group bg-white border border-sand rounded-2xl overflow-hidden">
+          <summary class="px-5 py-4 cursor-pointer font-semibold text-charcoal hover:text-gold transition-colors text-sm flex items-baseline justify-between gap-2 flex-wrap"><span>Community & Care: <em class="text-sm font-normal text-muted/60 ml-1">Community care is economic infrastructure</em></span><span class="text-xs text-muted/50 group-open:hidden">Read more ↓</span><span class="text-xs text-muted/50 hidden group-open:inline">Read less ↑</span></summary>
+          <div class="px-5 pb-4 space-y-1.5 text-sm text-muted">
+            <p>→ Join or start a <strong>neighborhood resource-sharing group</strong> focused on <strong><strong>mutual aid</strong></strong>, such as childcare swaps, meal networks, or emergency support funds. Contribute what you can to your immediate community, whether that's skills, transportation, meals, or translation support. You can connect with existing initiatives through <a href="https://www.mutualaidhub.org/" target="_blank" class="text-gold underline hover:text-charcoal">MutualAidHub.org</a>.</p>
+            <p>→ Build something small that can last, such as a <strong><strong>community fridge rotation</strong></strong>, a <strong>tool library</strong>, a <strong><strong>babysitting co-op</strong></strong>, a neighborhood group chat for resource sharing or any other simple system that neighbors can participate in regularly. Community fridges can be found on <a href="https://freedge.org/" target="_blank" class="text-gold underline hover:text-charcoal">Freedge</a> and <a href="https://www.changex.org/" target="_blank" class="text-gold underline hover:text-charcoal">Change X</a>.</p>
+            <p>→ If you've created a successful community initiative, document and share it. Register your <strong>mutual aid</strong> network as a <strong>501c3</strong> or <strong>fiscal sponsorship</strong> project, and submit it to <a href="https://mutualaiddisasterrelief.org/" target="_blank" class="text-gold underline hover:text-charcoal">Mutual Aid Disaster Relief</a> so others can replicate it.</p>
+            <p>→ Take action on local issues like healthcare, housing, or childcare by contacting your elected representatives — via town halls, emails, and calls — with specific concerns or solutions. Many effective policy changes start at the local or state/provincial level.</p>
+            <p>→ Support organizations already doing the work. Volunteer, donate, or contribute your skills to local groups working on food security, affordable housing, healthcare access, or community resilience.</p>
+          </div>
+        </details>
+        <details class="group bg-white border border-sand rounded-2xl overflow-hidden">
+          <summary class="px-5 py-4 cursor-pointer font-semibold text-charcoal hover:text-gold transition-colors text-sm flex items-baseline justify-between gap-2 flex-wrap"><span>Land & Environment: <em class="text-sm font-normal text-muted/60 ml-1">Clean air, clean water, and healthy land are quality of life issues</em></span><span class="text-xs text-muted/50 group-open:hidden">Read more ↓</span><span class="text-xs text-muted/50 hidden group-open:inline">Read less ↑</span></summary>
+          <div class="px-5 pb-4 space-y-1.5 text-sm text-muted">
+            <p>→ Check your area's air and water quality at <a href="https://www.airnow.gov/" target="_blank" class="text-gold underline hover:text-charcoal">AirNow.gov</a> or the <a href="https://www.epa.gov/myenvironment" target="_blank" class="text-gold underline hover:text-charcoal">EPA's MyEnvironment tool</a>.</p>
+            <p>→ Show up to <strong>public comment hearings</strong> for industrial permits or zoning decisions in your area. Your voice on the record matters.</p>
+            <p>→ Check whether your city has an <strong>Environmental or Sustainability Commission</strong>. These bodies advise City Council and are often looking for engaged constituents to strengthen their case.</p>
+          </div>
+        </details>
+        <details class="group bg-white border border-sand rounded-2xl overflow-hidden">
+          <summary class="px-5 py-4 cursor-pointer font-semibold text-charcoal hover:text-gold transition-colors text-sm flex items-baseline justify-between gap-2 flex-wrap"><span>Civic Power: <em class="text-sm font-normal text-muted/60 ml-1">Show up, speak up, and take a seat at the table</em></span><span class="text-xs text-muted/50 group-open:hidden">Read more ↓</span><span class="text-xs text-muted/50 hidden group-open:inline">Read less ↑</span></summary>
+          <div class="px-5 pb-4 space-y-1.5 text-sm text-muted">
+            <p>→ Attend a <strong>City Council meeting</strong> where wage ordinances are on the table. Push for wages and work conditions that let people actually get ahead.</p>
+            <p>→ Find out if your city has a <strong>participatory budgeting</strong> program at <a href="https://www.participatorybudgeting.org/" target="_blank" class="text-gold underline hover:text-charcoal">participatorybudgeting.org</a>. If it does, participate — these programs work best when a wide cross-section of the community shows up. If your city doesn't have one, bring it to your council member's attention. <a href="https://denvergov.org/Government/Agencies-Departments-Offices/Agencies-Departments-Offices-Directory/Community-Planning-and-Development/Planning/Denver-Peoples-Budget" target="_blank" class="text-gold underline hover:text-charcoal">Denver</a> and <a href="https://repair.lacity.gov/" target="_blank" class="text-gold underline hover:text-charcoal">Los Angeles</a> have working models.</p>
+            <p>→ Vote like your community depends on it, because it does. Use <a href="https://www.vote411.org/" target="_blank" class="text-gold underline hover:text-charcoal">VOTE411</a> to research every name on your ballot. The races at the bottom matter most.</p>
+            <p>→ Give a few hours before a local election to knock on doors or make calls. In local races, a weekend of conversations can be decisive.</p>
+            <p>→ Consider running for local office: City Council, School Board, Water District. These seats are often filled by default.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ================================================================ -->
+  <!--  PROGRESSIVE PAGE                                                -->
+  <!-- ================================================================ -->
+  <div id="page-progressive" class="page">
+    <header class="sticky top-0 z-50 bg-cream/90 backdrop-blur-md border-b border-sand/50">
+      <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+        <button onclick="navigate('home')" class="flex items-center gap-2 text-charcoal font-semibold hover:text-terracotta transition-colors text-sm">
+          <span class="text-lg">←</span> Back
+        </button>
+        <span class="text-xs uppercase tracking-[0.15em] text-muted/60 font-medium">A guide to a better future</span>
+      </div>
+    </header>
+
+    <section class="relative overflow-hidden bg-gradient-to-b from-terracotta/5 to-transparent">
+      <div class="max-w-6xl mx-auto px-6 pt-16 pb-8 text-center">
+        <h1 class="font-serif text-4xl sm:text-5xl font-bold text-charcoal leading-[1.15] mb-4 reveal">
+          A Fairer, More<br>Equitable Society
+        </h1>
+        <p class="text-xl text-muted max-w-2xl mx-auto leading-relaxed reveal" style="animation-delay: 0.1s;">
+          A fair society is possible. When we design economies around human dignity and ecological limits, everyone thrives. A sustainable economy doesn't leave anyone behind.
+        </p>
+      </div>
+    </section>
+
+    <!-- Browse Topics -->
+    <div class="max-w-6xl mx-auto px-6 pb-8 reveal-fade" style="animation-delay: 0.3s;">
+      <div class="flex flex-wrap justify-center gap-2">
+        <button onclick="scrollToSection('pro-section1')" class="px-4 py-2 bg-white border border-sand rounded-full text-sm text-muted hover:border-terracotta hover:text-terracotta transition-colors">The Vision</button>
+        <button onclick="scrollToSection('pro-section2')" class="px-4 py-2 bg-white border border-sand rounded-full text-sm text-muted hover:border-terracotta hover:text-terracotta transition-colors">The Formula</button>
+        <button onclick="scrollToSection('pro-section4')" class="px-4 py-2 bg-white border border-sand rounded-full text-sm text-muted hover:border-terracotta hover:text-terracotta transition-colors">Building Blocks of Better Economies</button>
+        <button onclick="scrollToSection('pro-section3')" class="px-4 py-2 bg-white border border-sand rounded-full text-sm text-muted hover:border-terracotta hover:text-terracotta transition-colors">Real-World Examples</button>
+        <button onclick="scrollToSection('pro-section5')" class="px-4 py-2 bg-white border border-sand rounded-full text-sm text-muted hover:border-terracotta hover:text-terracotta transition-colors">Take Action</button>
+      </div>
+    </div>
+
+    <!-- Section 1: The future you can have --><!-- Section 1: The future you can have -->
+    <section id="pro-section1" class="relative max-w-7xl mx-auto px-6 py-16">
+      <div class="relative rounded-3xl overflow-hidden reveal-scale" style="background: linear-gradient(135deg, #6b3a28 0%, #8a4a32 30%, #b55a3c 60%, #C7753A 100%);">
+        <div class="absolute inset-0 opacity-20 mix-blend-overlay" style="background-image: url('images/vision-progressive.jpg'); background-size: cover; background-position: center;"></div>
+        <div class="relative z-10 p-10 sm:p-16 text-center text-white">
+          <h2 class="font-serif text-3xl sm:text-4xl font-bold mb-8 reveal">The Vision</h2>
+          <div class="max-w-3xl mx-auto space-y-5 text-lg leading-relaxed text-white/90">
+            <p>Picture this: You come home from work feeling positive about your job. The pay is solid and you can cover your expenses, with a healthy work-life balance. You take the bus, because it comes every ten minutes; it's clean, it works, and you don't need a second car payment. The neighbourhood is well maintained and environmentally friendly. Home ownership and rental prices reflect what people can actually pay.</p>
+            <p class="font-medium text-white">Good jobs. Affordable housing. Strong local businesses. Clean air and water. These aren't separate issues — <em>they're all outcomes of the same thing:</em> better-designed economies that distribute value fairly and regenerate rather than deplete.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: The Sweet Spot -->
+    <section id="pro-section2" class="max-w-7xl mx-auto px-6 py-16 border-t border-sand/50">
+      <h2 class="font-serif text-3xl font-bold text-charcoal mb-4 reveal">The Formula</h2>
+      <p class="text-lg text-muted mb-10 max-w-2xl">To build better economies, we first need to see the full picture of what the economy actually is.</p>
+
+      <!-- Nested economy diagram + key points -->
+      <div class="grid lg:grid-cols-2 gap-10 items-center">
+        <!-- Embedded Economy Diagram -->
+        <style>
+          .infographic { width:100%; max-width:650px; aspect-ratio:1; position:relative; margin:0 auto; container-type:inline-size; }
+          .info-ring { position:absolute; border-radius:50%; display:flex; flex-direction:column; align-items:center; text-align:center; color:#fff; font-family:system-ui,-apple-system,sans-serif; }
+          .info-ring .ring-head { display:flex; flex-direction:column; align-items:center; position:absolute; width:100%; }
+          .info-ring .ring-title { font-family:Georgia,'Times New Roman',serif; letter-spacing:2px; text-transform:uppercase; font-weight:700; }
+          .info-ring .ring-icon { opacity:0.85; }
+          .info-ring .ring-desc { opacity:0.82; line-height:1.35; font-weight:600; }
+          .info-ring .ring-label { position:absolute; opacity:0.78; line-height:1.25; font-weight:600; text-align:center; }
+          #env  { width:100%; height:100%; top:0; left:0; z-index:1; background:#5A7340; }
+          #env  .ring-head { top:7%; }
+          #env  .ring-title { font-size:3.7cqi; }
+          #env  .ring-icon svg { width:4.6cqi; height:4.6cqi; margin:0.8cqi 0 0.5cqi; }
+          #env  .ring-desc { font-size:1.77cqi; max-width:46%; }
+          #env  .ring-label { font-size:2.15cqi; }
+          .l-env-nr  { top:22%; left:14%; }
+          .l-env-ca  { top:39%; left:7%; }
+          .l-env-cl  { top:58%; left:4%; }
+          .l-env-es  { top:58%; right:3%; }
+          .l-env-cw  { top:38%; right:8%; }
+          .l-env-bio { top:24%; right:13%; }
+          #soc  { width:67%; height:67%; top:24%; left:16.5%; z-index:2; background:#d49b8a; }
+          #soc  .ring-head { top:10%; }
+          #soc  .ring-title { font-size:2.92cqi; }
+          #soc  .ring-icon svg { width:4cqi; height:4cqi; margin:0.6cqi 0 0.3cqi; }
+          #soc  .ring-desc { font-size:1.85cqi; max-width:56%; }
+          #soc  .ring-label { font-size:2cqi; }
+          .l-soc-h   { top:36%; left:16%; }
+          .l-soc-co  { top:48%; left:5%; }
+          .l-soc-cu  { top:62%; left:8%; }
+          .l-soc-ed  { top:36%; right:10%; }
+          .l-soc-eq  { top:48%; right:8%; }
+          .l-soc-gov { top:62%; right:3%; }
+          #econ { width:57%; height:57%; top:34%; left:21.5%; z-index:3; background:#C7753A; }
+          #econ .ring-head { top:14%; }
+          #econ .ring-title { font-size:2.46cqi; }
+          #econ .ring-icon { font-size:3.38cqi; font-weight:700; margin:0.6cqi 0 0.3cqi; }
+          #econ .ring-desc { font-size:1.69cqi; max-width:62%; }
+          #econ .ring-label { font-size:1.69cqi; opacity:0.75; }
+          .l-econ-tr { top:52%; left:11%; }
+          .l-econ-co { top:52%; right:11%; }
+          .l-econ-em { bottom:22%; left:50%; transform:translateX(-50%); white-space:nowrap; }
+        </style>
+        <div class="infographic">
+          <div id="env" class="info-ring">
+            <div class="ring-head">
+              <span class="ring-title">ENVIRONMENT</span>
+              <span class="ring-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22v-9"/><path d="M4.2 10.8C3 9.5 2 7.8 2 6c0 0 4-4 10-4s10 4 10 4c0 1.8-1 3.5-2.2 4.8"/><path d="M12 13C8 13 5 10 4 7c3 0 6 1 8 6z"/><path d="M12 13c4 0 7-3 8-6-3 0-6 1-8 6z"/></svg></span>
+              <span class="ring-desc">Supports life and all biological systems</span>
+            </div>
+            <span class="ring-label l-env-nr">Natural<br>Resources</span>
+            <span class="ring-label l-env-ca">Clean<br>Air</span>
+            <span class="ring-label l-env-cl">Climate</span>
+            <span class="ring-label l-env-es">Ecosystem<br>Services</span>
+            <span class="ring-label l-env-cw">Clean<br>Water</span>
+            <span class="ring-label l-env-bio">Biodiversity</span>
+            <div id="soc" class="info-ring">
+              <div class="ring-head">
+                <span class="ring-title">SOCIETY</span>
+                <span class="ring-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="6" r="2"/><circle cx="15" cy="6" r="2"/><circle cx="12" cy="17" r="2"/><path d="M5 20v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/><path d="M12 15v-4"/></svg></span>
+                <span class="ring-desc">Human well-being depends on a healthy environment</span>
+              </div>
+              <span class="ring-label l-soc-h">Health</span>
+              <span class="ring-label l-soc-co">Community</span>
+              <span class="ring-label l-soc-cu">Culture</span>
+              <span class="ring-label l-soc-ed">Education</span>
+              <span class="ring-label l-soc-eq">Equity</span>
+              <span class="ring-label l-soc-gov">Governance</span>
+              <div id="econ" class="info-ring">
+                <div class="ring-head">
+                  <span class="ring-title">ECONOMY</span>
+                  <span class="ring-icon">$</span>
+                  <span class="ring-desc">A system for resource distribution</span>
+                </div>
+                <span class="ring-label l-econ-tr">Trade</span>
+                <span class="ring-label l-econ-co">Commerce</span>
+                <span class="ring-label l-econ-em">Employment</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Key points as accordions with preview text -->
+        <div class="space-y-3 stagger-children">
+          <details class="group bg-white border border-sand rounded-2xl overflow-hidden">
+            <summary class="px-5 py-4 cursor-pointer hover:text-terracotta transition-colors">
+              <div class="flex items-center justify-between gap-2">
+                <span class="font-semibold text-charcoal text-sm">Mainstream Economics</span>
+                <span class="text-xs text-muted/50 group-open:hidden flex-shrink-0">Read more ↓</span>
+                <span class="text-xs text-muted/50 hidden group-open:inline flex-shrink-0">Read less ↑</span>
+              </div>
+              <p class="text-sm text-muted leading-relaxed mt-2 font-normal">Mainstream economics, the kind taught in schools, debated in Congress, and reported in the news, draws an invisible circle around markets, and calls it "the economy." Everything outside that circle gets treated as secondary: nature, households, communities. Even the state is framed as an outsider "intervening."</p>
+            </summary>
+            <div class="px-5 pb-4 text-sm text-muted leading-relaxed space-y-2">
+              <p>When social or ecological harm occurs, we talk about it through the lens of markets and label it an "externality," which reveals the bias built into the system. We look downstream, but never upstream, at the dependencies of every market transaction on healthy, social and ecological systems.</p>
+            </div>
+          </details>
+          <details class="group bg-white border border-sand rounded-2xl overflow-hidden">
+            <summary class="px-5 py-4 cursor-pointer hover:text-terracotta transition-colors">
+              <div class="flex items-center justify-between gap-2">
+                <span class="font-semibold text-charcoal text-sm">The Invisible Economy</span>
+                <span class="text-xs text-muted/50 group-open:hidden flex-shrink-0">Read more ↓</span>
+                <span class="text-xs text-muted/50 hidden group-open:inline flex-shrink-0">Read less ↑</span>
+              </div>
+              <p class="text-sm text-muted leading-relaxed mt-2 font-normal">Some of the most important parts of the economy, such as unpaid care-giving, household care and domestic work, are made completely invisible by this framing. Raising children, caring for the elderly, maintaining a home — none of this appears in our Gross Domestic Product (GDP). Yet without it, no market activity could function well.</p>
+            </summary>
+            <div class="px-5 pb-4 text-sm text-muted leading-relaxed space-y-2">
+              <p>The same goes for what we call the "commons." For millennia, communities have self-organized to manage shared land, water, knowledge, and culture, through co-created rules. This tradition of collective stewardship barely exists in mainstream economic discourse. The controversial but commonly cited notion of the tragedy of the commons describes what occurs when markets run on short term self-interest, creating overuse and depletion of our essential resources, ultimately harming everyone. The result is an economy designed around scarcity and endless growth — a view that, from the very beginning, casts other people as competitors rather than human beings that can collaborate to ensure that everybody does, in fact, have what they need.</p>
+            </div>
+          </details>
+          <details class="group bg-white border border-sand rounded-2xl overflow-hidden">
+            <summary class="px-5 py-4 cursor-pointer hover:text-terracotta transition-colors">
+              <div class="flex items-center justify-between gap-2">
+                <span class="font-semibold text-charcoal text-sm">A Better Economy</span>
+                <span class="text-xs text-muted/50 group-open:hidden flex-shrink-0">Read more ↓</span>
+                <span class="text-xs text-muted/50 hidden group-open:inline flex-shrink-0">Read less ↑</span>
+              </div>
+              <p class="text-sm text-muted leading-relaxed mt-2 font-normal">We believe that better economies operate in the sweet spot of meeting everyone's basic needs whilst making sure the way we achieve that is good for us and for the planet. After all, the economy is embedded in society, which is embedded in living systems. Better economies are possible, and they're already being built.</p>
+            </summary>
+            <div class="px-5 pb-4 text-sm text-muted leading-relaxed space-y-2">
+              <p>Denmark and the Netherlands collect similar taxes to the US, but manage them differently: they have robust social services, universal health care, free higher education, and in Denmark, students are actually paid to study. The result is cities like Copenhagen and Amsterdam where the young and the elderly alike have what they need to live full lives. The question is no longer whether this is possible. It's whether we're willing to learn from the places already doing it.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4: Building Blocks (hover circles) -->
+    <section id="pro-section4" class="max-w-6xl mx-auto px-6 py-16 border-t border-sand/50">
+      <h2 class="font-serif text-3xl font-bold text-charcoal mt-2 mb-10 reveal">Building Blocks of Better Economies</h2>
+      <div class="flex flex-wrap justify-center gap-4 lg:gap-6 stagger-children">
+        <div class="build-circle relative w-36 h-36 sm:w-40 sm:h-40 rounded-full bg-white border-2 border-terracotta/30 shadow-md flex flex-col items-center justify-center cursor-pointer group">
+          <div class="w-11 h-11 rounded-full bg-charcoal/5 text-charcoal flex items-center justify-center group-hover:bg-charcoal group-hover:text-white transition-all duration-300"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v2M12 15v2"/><path d="M9.5 9.5a2.5 2.5 0 0 1 5 0c0 1.5-1.5 2-2.5 2.5S9.5 13.5 9.5 15a2.5 2.5 0 0 0 5 0"/></svg></div>
+          <span class="text-xs font-semibold text-charcoal mt-1.5 text-center px-2">Living Wages</span>
+          <div class="hover-reveal absolute -bottom-2 left-1/2 -translate-x-1/2 translate-y-full bg-terracotta text-white text-xs rounded-xl px-4 py-3 w-56 text-center shadow-xl z-20">
+            Ensuring everyone who works can afford housing, food, healthcare, and a decent quality of life.
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full w-3 h-3 bg-terracotta" style="clip-path: polygon(50% 0%, 0% 100%, 100% 100%);"></div>
+          </div>
+        </div>
+        <div class="build-circle relative w-36 h-36 sm:w-40 sm:h-40 rounded-full bg-white border-2 border-terracotta/30 shadow-md flex flex-col items-center justify-center cursor-pointer group">
+          <div class="w-11 h-11 rounded-full bg-charcoal/5 text-charcoal flex items-center justify-center group-hover:bg-charcoal group-hover:text-white transition-all duration-300"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="1"/><path d="M9 21v-6h6v6"/><path d="M3 10h18"/><path d="M12 6v6M9 9h6"/></svg></div>
+          <span class="text-xs font-semibold text-charcoal mt-1.5 text-center px-2">Universal Basic Services</span>
+          <div class="hover-reveal absolute -bottom-2 left-1/2 -translate-x-1/2 translate-y-full bg-terracotta text-white text-xs rounded-xl px-4 py-3 w-56 text-center shadow-xl z-20">
+            Healthcare and education treated as rights, not privileges, creating the foundation for everyone to thrive.
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full w-3 h-3 bg-terracotta" style="clip-path: polygon(50% 0%, 0% 100%, 100% 100%);"></div>
+          </div>
+        </div>
+        <div class="build-circle relative w-36 h-36 sm:w-40 sm:h-40 rounded-full bg-white border-2 border-terracotta/30 shadow-md flex flex-col items-center justify-center cursor-pointer group">
+          <div class="w-11 h-11 rounded-full bg-charcoal/5 text-charcoal flex items-center justify-center group-hover:bg-charcoal group-hover:text-white transition-all duration-300"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5V20H3z"/><rect x="9" y="14" width="6" height="6"/></svg></div>
+          <span class="text-xs font-semibold text-charcoal mt-1.5 text-center px-2">Affordable Housing</span>
+          <div class="hover-reveal absolute -bottom-2 left-1/2 -translate-x-1/2 translate-y-full bg-terracotta text-white text-xs rounded-xl px-4 py-3 w-56 text-center shadow-xl z-20">
+            Housing as a human right, with models like social housing creating stability for entire communities.
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full w-3 h-3 bg-terracotta" style="clip-path: polygon(50% 0%, 0% 100%, 100% 100%);"></div>
+          </div>
+        </div>
+        <div class="build-circle relative w-36 h-36 sm:w-40 sm:h-40 rounded-full bg-white border-2 border-terracotta/30 shadow-md flex flex-col items-center justify-center cursor-pointer group">
+          <div class="w-11 h-11 rounded-full bg-charcoal/5 text-charcoal flex items-center justify-center group-hover:bg-charcoal group-hover:text-white transition-all duration-300"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M2 12h20"/><path d="M12 2a15.5 15.5 0 0 1 4 10 15.5 15.5 0 0 1-4 10A15.5 15.5 0 0 1 8 12a15.5 15.5 0 0 1 4-10z"/></svg></div>
+          <span class="text-xs font-semibold text-charcoal mt-1.5 text-center px-2">Climate Justice</span>
+          <div class="hover-reveal absolute -bottom-2 left-1/2 -translate-x-1/2 translate-y-full bg-terracotta text-white text-xs rounded-xl px-4 py-3 w-56 text-center shadow-xl z-20">
+            Environmental protection that addresses inequality and ensures a livable planet for all.
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full w-3 h-3 bg-terracotta" style="clip-path: polygon(50% 0%, 0% 100%, 100% 100%);"></div>
+          </div>
+        </div>
+        <div class="build-circle relative w-36 h-36 sm:w-40 sm:h-40 rounded-full bg-white border-2 border-terracotta/30 shadow-md flex flex-col items-center justify-center cursor-pointer group">
+          <div class="w-11 h-11 rounded-full bg-charcoal/5 text-charcoal flex items-center justify-center group-hover:bg-charcoal group-hover:text-white transition-all duration-300"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="6" r="2"/><circle cx="15" cy="6" r="2"/><circle cx="12" cy="17" r="2"/><path d="M5 20v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/><path d="M12 15v-4"/></svg></div>
+          <span class="text-xs font-semibold text-charcoal mt-1.5 text-center px-2">Mutual Aid Networks</span>
+          <div class="hover-reveal absolute -bottom-2 left-1/2 -translate-x-1/2 translate-y-full bg-terracotta text-white text-xs rounded-xl px-4 py-3 w-56 text-center shadow-xl z-20">
+            Community-based support systems that provide protection from financial and community emergencies.
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full w-3 h-3 bg-terracotta" style="clip-path: polygon(50% 0%, 0% 100%, 100% 100%);"></div>
+          </div>
+        </div>
+        <div class="build-circle relative w-36 h-36 sm:w-40 sm:h-40 rounded-full bg-white border-2 border-terracotta/30 shadow-md flex flex-col items-center justify-center cursor-pointer group">
+          <div class="w-11 h-11 rounded-full bg-charcoal/5 text-charcoal flex items-center justify-center group-hover:bg-charcoal group-hover:text-white transition-all duration-300"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V8l7-5 7 5v13"/><path d="M9 21v-6h6v6"/><path d="M3 9h18"/></svg></div>
+          <span class="text-xs font-semibold text-charcoal mt-1.5 text-center px-2">Cooperative Ownership</span>
+          <div class="hover-reveal absolute -bottom-2 left-1/2 -translate-x-1/2 translate-y-full bg-terracotta text-white text-xs rounded-xl px-4 py-3 w-56 text-center shadow-xl z-20">
+            Workers and communities keeping wealth local and democratic.
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full w-3 h-3 bg-terracotta" style="clip-path: polygon(50% 0%, 0% 100%, 100% 100%);"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: See it in Action -->
+    <section id="pro-section3" class="max-w-6xl mx-auto px-6 py-16 border-t border-sand/50">
+      <h2 class="font-serif text-3xl font-bold text-charcoal mb-2 reveal">Real-World Examples</h2>
+      <p class="text-muted mb-10 reveal" style="animation-delay: 0.1s;">Examples of better economies working in the real world</p>
+
+      <div class="relative reveal">
+        <div class="flex gap-6 overflow-x-auto pb-4 snap-x snap-mandatory" style="scrollbar-width:none; -ms-overflow-style:none;" id="pro-carousel">
+          <!-- Vienna -->
+          <div class="carousel-card bg-white border border-sand rounded-2xl overflow-hidden flex-shrink-0 shadow-sm hover:shadow-lg transition-shadow snap-start">
+            <div class="h-40 bg-cover bg-center" style="background-image: url('images/5b4e21541900002b00c65f11.webp'); background-color: #5a4a3a;"></div>
+            <div class="p-5">
+              <p class="text-xs text-muted/60 font-medium mb-1">Vienna, Austria</p>
+              <h3 class="font-serif text-lg font-bold text-charcoal mb-2">Affordable Housing for Community Wealth</h3>
+              <p class="text-sm text-muted leading-relaxed line-clamp-3 mb-3">As the largest home-owning city in Europe, Vienna proves affordable housing at scale creates economic stability. Renters pay roughly a third of their counterparts in London, Paris or Dublin.</p>
+              <button onclick="openCaseModal('pro-case1')" class="text-xs text-terracotta font-semibold hover:text-charcoal transition-colors">Learn more →</button>
+            </div>
+          </div>
+          <!-- Porto Alegre -->
+          <div class="carousel-card bg-white border border-sand rounded-2xl overflow-hidden flex-shrink-0 shadow-sm hover:shadow-lg transition-shadow snap-start">
+            <div class="h-40 bg-cover bg-center" style="background-image: url('images/porto alegre.jpg'); background-color: #3a5a4a;"></div>
+            <div class="p-5">
+              <p class="text-xs text-muted/60 font-medium mb-1">Porto Alegre, Brazil · +11,000 cities worldwide</p>
+              <h3 class="font-serif text-lg font-bold text-charcoal mb-2">Participatory Budgeting Breakthroughs</h3>
+              <p class="text-sm text-muted leading-relaxed line-clamp-3 mb-3">Starting in 1989, residents voted on city funds. Clean water reached 98% of the city, schools multiplied, child mortality dropped ~20%. Over 11,000 cities have since adopted the model.</p>
+              <button onclick="openCaseModal('pro-case2')" class="text-xs text-terracotta font-semibold hover:text-charcoal transition-colors">Learn more →</button>
+            </div>
+          </div>
+          <!-- Amsterdam -->
+          <div class="carousel-card bg-white border border-sand rounded-2xl overflow-hidden flex-shrink-0 shadow-sm hover:shadow-lg transition-shadow snap-start">
+            <div class="h-40 bg-cover bg-center" style="background-image: url('images/photo-1534351590666-13e3e96b5017.jpg'); background-color: #3a5a6a;"></div>
+            <div class="p-5">
+              <p class="text-xs text-muted/60 font-medium mb-1">Amsterdam, Netherlands</p>
+              <h3 class="font-serif text-lg font-bold text-charcoal mb-2">Measuring What Actually Matters</h3>
+              <p class="text-sm text-muted leading-relaxed line-clamp-3 mb-3">Amsterdam became the first city to formally adopt the Doughnut Economics model — replacing GDP growth as the measure of success. Over 70 cities worldwide have since followed.</p>
+              <button onclick="openCaseModal('pro-case3')" class="text-xs text-terracotta font-semibold hover:text-charcoal transition-colors">Learn more →</button>
+            </div>
+          </div>
+          <!-- Curitiba -->
+          <div class="carousel-card bg-white border border-sand rounded-2xl overflow-hidden flex-shrink-0 shadow-sm hover:shadow-lg transition-shadow snap-start">
+            <div class="h-40 bg-cover bg-center" style="background-image: url('images/curitiba.jpg'); background-color: #3a5a3a;"></div>
+            <div class="p-5">
+              <p class="text-xs text-muted/60 font-medium mb-1">Curitiba, Brazil</p>
+              <h3 class="font-serif text-lg font-bold text-charcoal mb-2">A Model for Sustainable City Development</h3>
+              <p class="text-sm text-muted leading-relaxed line-clamp-3 mb-3">In Brazil, Curitiba adopted a master plan six decades ago that has made it a modern leader in urban development, sustainable living, and the fight against climate change.</p>
+              <button onclick="openCaseModal('pro-case4')" class="text-xs text-terracotta font-semibold hover:text-charcoal transition-colors">Learn more →</button>
+            </div>
+          </div>
+        </div>
+        <button onclick="scrollCarousel('pro-carousel', -1)" class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 w-10 h-10 rounded-full bg-white border border-sand shadow-md flex items-center justify-center hover:bg-terracotta hover:text-white transition-colors text-lg z-10 hidden lg:flex">←</button>
+        <button onclick="scrollCarousel('pro-carousel', 1)" class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 w-10 h-10 rounded-full bg-white border border-sand shadow-md flex items-center justify-center hover:bg-terracotta hover:text-white transition-colors text-lg z-10 hidden lg:flex">→</button>
+      </div>
+    </section>
+
+    <!-- Case Modals for Progressive -->
+    <div class="case-modal" id="pro-case1"><div class="case-modal-backdrop" onclick="closeCaseModal('pro-case1')"></div><div class="case-modal-content p-8"><button onclick="closeCaseModal('pro-case1')" class="absolute top-4 right-4 text-muted hover:text-charcoal text-xl">×</button><img src="images/Karl_Marx_Hof.jpg" class="w-full h-48 object-cover rounded-xl mb-5" alt="Vienna" onerror="this.style.display='none'"><span class="text-xs text-terracotta/70 font-medium">Vienna, Austria</span><h3 class="font-serif text-2xl font-bold text-charcoal mt-2 mb-4">Affordable Housing for Community Wealth Building</h3><div class="space-y-3 text-muted text-sm leading-relaxed"><p>As the largest home-owning city in Europe, Vienna proves that affordable housing at scale creates economic stability and community resilience. In the place that retains its reputation as the world's most livable city, Vienna's renters pay roughly a third of their counterparts in London, Paris or Dublin, on average.</p><p>About 40 years ago, Vienna started a "land procurement and urban renewal fund" that reserves land in the city exclusively for social housing. Today, over 40 percent of the city's housing units are social housing, providing permanently affordable, publicly subsidized, climate resilient homes for the majority of the city's renters. Social housing is equitably distributed throughout the city, boasting greater income diversity within neighborhoods — and far less inequality between them — than comparable American cities.</p><p>As the city's population has grown over the past two decades, Vienna has continued to build affordable housing, where grandparents live down the street from their grandkids, in homes that are energy efficient. Developers' competition in subsidised housing accelerated social innovations and new solutions for climate protection and climate adaptation in the building sector. Its municipal green social housing system provides an example of how, in the context of a conservative national government, states and cities can still take bold action to tackle the housing and climate crises together.</p><p class="text-xs text-muted/50 mt-4">Source: <a href="https://www.wienerwohnen.at/" target="_blank" class="underline hover:text-terracotta">Wiener Wohnen — Vienna Social Housing</a></p></div></div></div>
+    <div class="case-modal" id="pro-case2"><div class="case-modal-backdrop" onclick="closeCaseModal('pro-case2')"></div><div class="case-modal-content p-8"><button onclick="closeCaseModal('pro-case2')" class="absolute top-4 right-4 text-muted hover:text-charcoal text-xl">×</button><img src="images/porto alegre.jpg" class="w-full h-48 object-cover rounded-xl mb-5" alt="Porto Alegre" onerror="this.style.display='none'"><span class="text-xs text-terracotta/70 font-medium">Porto Alegre, Brazil · Adopted by 11,000+ cities worldwide</span><h3 class="font-serif text-2xl font-bold text-charcoal mt-2 mb-4">Participatory Budgeting Breakthroughs</h3><div class="space-y-3 text-muted text-sm leading-relaxed"><p>Starting in 1989, <strong>participatory budgeting</strong> let residents in Porto Alegre vote on how to use a portion of city funds. The results were remarkable: clean water reached nearly the entire city, schools multiplied, child mortality dropped by almost 20%, and university attendance doubled. Participatory budgeting became one of the best practical ways to deliver stronger and healthier communities.</p><p>Over 11,000 cities, states, and institutions around the world have since adopted the model. In the U.S., cities like Los Angeles and Denver have used it to fund job training, affordable housing, safer streets, and services for underserved communities. In LA, the city allocated $8.5 million to nine neighborhoods where at least 87% of residents are people of color. Residents directed money toward job training, rental assistance, urban agriculture programs, and medical services. In Denver, the People's Budget funded affordable housing, accessible transit, and safer intersections.</p><p>Participatory budgeting has helped bring measurable change to smaller communities too: safer streets for pedestrians in Durham, North Carolina, less food waste in Marin County, California, and new bus shelters giving residents in King County, Washington reliable access to transit. Small investments, decided by the people who need them most, added up to more livable, connected communities. The model has spread globally, from Argentina to Finland. Today, Switzerland stands out as the country where <strong>participatory budgeting</strong> is a binding rule.</p><p class="text-xs text-muted/50 mt-4">Source: <a href="https://www.participatorybudgeting.org/" target="_blank" class="underline hover:text-terracotta">Participatory Budgeting Project</a></p></div></div></div>
+    <div class="case-modal" id="pro-case3"><div class="case-modal-backdrop" onclick="closeCaseModal('pro-case3')"></div><div class="case-modal-content p-8"><button onclick="closeCaseModal('pro-case3')" class="absolute top-4 right-4 text-muted hover:text-charcoal text-xl">×</button><img src="images/photo-1534351590666-13e3e96b5017.jpg" class="w-full h-48 object-cover rounded-xl mb-5" alt="Amsterdam" onerror="this.style.display='none'"><span class="text-xs text-terracotta/70 font-medium">Amsterdam, Netherlands</span><h3 class="font-serif text-2xl font-bold text-charcoal mt-2 mb-4">Measuring What Actually Matters</h3><div class="space-y-3 text-muted text-sm leading-relaxed"><p>Amsterdam became the first city in the world to formally adopt the Doughnut Economics model, replacing GDP growth as the primary measure of success with something more meaningful. Rather than asking how fast the economy is growing, the city asks whether people have enough, and whether the city can sustain that for generations to come. It is a simple shift in question that leads to very different decisions.</p><p>Within two years from its adoption (2020), Amsterdam launched over 40 circular economy initiatives, significantly reduced single-use plastics, and redirected urban development planning away from growth-at-all-costs, toward meeting residents' basic needs within ecological limits. The framework has since been adopted by over 70 cities worldwide, from Brussels to Dunedin, signaling a growing recognition that measuring only GDP misses most of what makes a city worth living in.</p><p class="text-xs text-muted/50 mt-4">Source: <a href="https://www.amsterdam.nl/en/policy/sustainability/circular-economy/" target="_blank" class="underline hover:text-terracotta">City of Amsterdam — Doughnut Economics</a></p></div></div></div>
+    <div class="case-modal" id="pro-case4"><div class="case-modal-backdrop" onclick="closeCaseModal('pro-case4')"></div><div class="case-modal-content p-8"><button onclick="closeCaseModal('pro-case4')" class="absolute top-4 right-4 text-muted hover:text-charcoal text-xl">×</button><img src="images/curitiba.jpg" class="w-full h-48 object-cover rounded-xl mb-5" alt="Curitiba" onerror="this.style.display='none'"><span class="text-xs text-terracotta/70 font-medium">Curitiba, Brazil</span><h3 class="font-serif text-2xl font-bold text-charcoal mt-2 mb-4">A Model for Sustainable City Development</h3><div class="space-y-3 text-muted text-sm leading-relaxed"><p>In the 1960s, Curitiba was fast-growing and facing a choice: build for cars, or build for people. The city's urban planning favoured pedestrianisation, mixed-use neighbourhoods, public transport use, green space and heritage protection. It chose people, and the results have been studied by urban planners around the world ever since.</p><p>Curitiba started integrating green spaces with public transit, focusing on a road system and land use that promoted socio-economic development and environmental preservation. Curitiba created the first pedestrian-only street in the city center in the early 1970s. It launched transit corridors with express buses using dedicated lanes, alongside lanes for slower traffic. This system, combined with terminals and a single fare system, created an approach now known globally as Bus Rapid Transit (BRT).</p><p>The largest city and capital of the Southern Brazilian state of Paraná, Curitiba has over 1.7 million inhabitants. More than 60% of commuters travel by bus daily, due to its efficiency and affordable fares. The city maintains 52m² of green space per person, one of the highest densities of urban green space in the world. When severe flooding caused $50 million in damage in the early 80s, Curitiba responded not with expensive concrete infrastructure, but with a natural drainage system using green space to absorb excess water.</p><p>Curitiba's 30-year economic growth rate ran 3.1% higher than the Brazilian national average, while per-capita income is 66% higher. The population grew by 1,000% over 60 years, without the inequality and congestion that typically follows that kind of growth.</p><p class="text-xs text-muted/50 mt-4">Sources: <a href="https://www.curitiba.pr.gov.br/" target="_blank" class="underline hover:text-terracotta">City of Curitiba — Urban Planning</a> · <a href="https://www.rtpi.org.uk/policy-and-research/futureproof-new-towns-international-lessons-on-how-to-build-flexible-and-adaptable-new-towns-in-england/7-case-study-curitiba/" target="_blank" class="underline hover:text-terracotta">RTPI — Case Study: Curitiba</a></p></div></div></div>
+
+    <!-- Section 5: Take Action -->
+    <section id="pro-section5" class="max-w-6xl mx-auto px-6 py-16 border-t border-sand/50">
+      <h2 class="font-serif text-3xl font-bold text-charcoal mb-4 reveal">Take Action</h2>
+      <p class="text-lg text-muted mb-10 leading-relaxed reveal" style="animation-delay: 0.15s;">Whether you're a business owner, employee, parent, student, or community member, your choice, voice, and actions matter.</p>
+      <div class="space-y-3 stagger-children">
+        <details class="group bg-white border border-sand rounded-2xl overflow-hidden">
+          <summary class="px-5 py-4 cursor-pointer font-semibold text-charcoal hover:text-terracotta transition-colors text-sm flex items-baseline justify-between gap-2 flex-wrap"><span>Work & Wages: <em class="text-sm font-normal text-muted/60 ml-1">Fight for an economy where work is dignified and fairly rewarded</em></span><span class="text-xs text-muted/50 group-open:hidden">Read more ↓</span><span class="text-xs text-muted/50 hidden group-open:inline">Read less ↑</span></summary>
+          <div class="px-5 pb-4 space-y-1.5 text-sm text-muted">
+            <p>→ Sign and share petitions supporting your state's <strong>livable wage</strong> campaigns.</p>
+            <p>→ Leave a Google review specifically praising businesses that pay good wages.</p>
+            <p>→ Attend a <strong>City Council meeting</strong> where wage ordinances are being discussed.</p>
+            <p>→ Join or start a workplace organizing committee. Connect with your local <a href="https://aflcio.org/" target="_blank" class="text-terracotta underline hover:text-charcoal">AFL-CIO</a> or independent union chapter.</p>
+            <p>→ Hold your local <strong>Chamber of Commerce</strong> accountable on the issues that affect working families — childcare access, wages, working conditions. Push business associations to use their political leverage.</p>
+            <p>→ Join a local chapter of <a href="https://indivisible.org/" target="_blank" class="text-terracotta underline hover:text-charcoal">Indivisible</a> or similar civic organizations. Coordinated civic pressure is how state-level policy actually moves.</p>
+            <p>→ If you own a business, explore converting it to a <strong>worker cooperative</strong> through the <a href="https://www.nceo.org/" target="_blank" class="text-terracotta underline hover:text-charcoal">National Center for Employee Ownership</a>.</p>
+            <p>→ Attend a <a href="https://institute.coop/" target="_blank" class="text-terracotta underline hover:text-charcoal">Democracy at Work Institute</a> training, including the School of Democratic Management. They offer courses on co-op governance, management, and transitioning businesses to worker ownership.</p>
+          </div>
+        </details>
+        <details class="group bg-white border border-sand rounded-2xl overflow-hidden">
+          <summary class="px-5 py-4 cursor-pointer font-semibold text-charcoal hover:text-terracotta transition-colors text-sm flex items-baseline justify-between gap-2 flex-wrap"><span>Money & Local Economy: <em class="text-sm font-normal text-muted/60 ml-1">Put your economic power to work for a fairer, more sustainable economy</em></span><span class="text-xs text-muted/50 group-open:hidden">Read more ↓</span><span class="text-xs text-muted/50 hidden group-open:inline">Read less ↑</span></summary>
+          <div class="px-5 pb-4 space-y-1.5 text-sm text-muted">
+            <p>→ Do you own stock? You have power as a shareholder to influence company decisions. <a href="https://www.asyousow.org/" target="_blank" class="text-terracotta underline hover:text-charcoal">Activate your shareholder influence HERE.</a></p>
+            <p>→ Encourage investment firms to expand offerings for ESG (Environmental, Social, and Governance) investing. Ask your bank, financial advisor, or pension fund what ESG (Environmental, Social, and Governance) investment options they offer, and push for more. If not, switch to a financial institution that does.</p>
+            <p>→ Use the <a href="https://www.usworker.coop/" target="_blank" class="text-terracotta underline hover:text-charcoal">USFWC directory</a> to find <strong>worker-owned businesses</strong> near you, or attend a USFWC training.</p>
+            <p>→ Move your banking to a <strong>credit union</strong>. Invest through <a href="https://www.sharedcapital.coop/" target="_blank" class="text-terracotta underline hover:text-charcoal">Shared Capital Cooperative</a> or the <a href="https://www.cooperativefund.org/" target="_blank" class="text-terracotta underline hover:text-charcoal">Cooperative Fund of New England</a>.</p>
+            <p>→ Use <a href="https://www.yelp.com/" target="_blank" class="text-terracotta underline hover:text-charcoal">Yelp</a> or <a href="https://maps.google.com/" target="_blank" class="text-terracotta underline hover:text-charcoal">Google Maps</a> filtered to locally-owned only. Move one recurring purchase — coffee, groceries, hardware — to a local or cooperative business. Every dollar spent locally builds more wealth in your community than a dollar sent to a big corporation.</p>
+            <p>→ Open an account with a CDFI. They lend locally where big banks won't. Find one at <a href="https://www.cdfifund.gov/" target="_blank" class="text-terracotta underline hover:text-charcoal">cdfifund.gov</a>.</p>
+            <p>→ Advocate for or invest in a <strong>Community Land Trust</strong> in your city. Organizations like <a href="https://groundedsolutions.org/" target="_blank" class="text-terracotta underline hover:text-charcoal">Grounded Solutions Network</a> can connect you.</p>
+            <p>→ Push your City Council to adopt a <strong>local purchasing preference</strong> policy for city contracts.</p>
+          </div>
+        </details>
+        <details class="group bg-white border border-sand rounded-2xl overflow-hidden">
+          <summary class="px-5 py-4 cursor-pointer font-semibold text-charcoal hover:text-terracotta transition-colors text-sm flex items-baseline justify-between gap-2 flex-wrap"><span>Community & Care: <em class="text-sm font-normal text-muted/60 ml-1">Healthcare, childcare, and <strong>mutual aid</strong> are infrastructure, not luxuries</em></span><span class="text-xs text-muted/50 group-open:hidden">Read more ↓</span><span class="text-xs text-muted/50 hidden group-open:inline">Read less ↑</span></summary>
+          <div class="px-5 pb-4 space-y-1.5 text-sm text-muted">
+            <p>→ Join or start a <strong>neighborhood resource-sharing group</strong> focused on <strong><strong>mutual aid</strong></strong>, such as childcare swaps, meal networks, rides, or emergency support funds. Contribute what you can to your immediate community, whether that's skills, transportation, meals, or translation support. You can connect with existing initiatives through <a href="https://www.mutualaidhub.org/" target="_blank" class="text-terracotta underline hover:text-charcoal">MutualAidHub.org</a>.</p>
+            <p>→ Build something small that can last, such as a <strong><strong>community fridge rotation</strong></strong>, a <strong>tool library</strong>, a <strong><strong>babysitting co-op</strong></strong>, a neighborhood group chat for resource sharing or any other simple system that neighbors can participate in regularly. Community fridges can be found on <a href="https://freedge.org/" target="_blank" class="text-terracotta underline hover:text-charcoal">Freedge</a> and <a href="https://www.changex.org/" target="_blank" class="text-terracotta underline hover:text-charcoal">Change X</a>.</p>
+            <p>→ If you've created a successful community initiative, document and share it. Register your <strong>mutual aid</strong> network as a <strong>501c3</strong> or <strong>fiscal sponsorship</strong> project, and submit it to <a href="https://mutualaiddisasterrelief.org/" target="_blank" class="text-terracotta underline hover:text-charcoal">Mutual Aid Disaster Relief</a> so others can replicate it.</p>
+            <p>→ Advocate for practical change. Research healthcare, housing, or childcare challenges in your area and contact your elected representatives regularly via town halls, emails, and calls. Many impactful policy changes begin at the local or state/provincial level.</p>
+            <p>→ Volunteer with or donate to state-level campaigns pushing for universal pre-K or Medicaid expansion in your state.</p>
+            <p>→ Support organizations already doing the work. Volunteer, donate, or contribute your skills to local groups working on food security, affordable housing, healthcare access, or community resilience.</p>
+          </div>
+        </details>
+        <details class="group bg-white border border-sand rounded-2xl overflow-hidden">
+          <summary class="px-5 py-4 cursor-pointer font-semibold text-charcoal hover:text-terracotta transition-colors text-sm flex items-baseline justify-between gap-2 flex-wrap"><span>Land & Environment: <em class="text-sm font-normal text-muted/60 ml-1">Advocate for climate action and environmental justice</em></span><span class="text-xs text-muted/50 group-open:hidden">Read more ↓</span><span class="text-xs text-muted/50 hidden group-open:inline">Read less ↑</span></summary>
+          <div class="px-5 pb-4 space-y-1.5 text-sm text-muted">
+            <p>→ Follow, amplify, or join frontline organizations or your regional environmental justice coalition. More information at <a href="https://climatejusticealliance.org/" target="_blank" class="text-terracotta underline hover:text-charcoal">climatejusticealliance.org</a>.</p>
+            <p>→ Check your zip code's pollution burden using the <a href="https://www.epa.gov/myenvironment" target="_blank" class="text-terracotta underline hover:text-charcoal">EPA's MyEnvironment tool</a> and air quality on <a href="https://www.airnow.gov/" target="_blank" class="text-terracotta underline hover:text-charcoal">AirNow.gov</a>, then use what you learn to contact local officials or attend <strong>City Council meeting</strong>s to push for targeted clean air improvements.</p>
+            <p>→ Push your city to adopt a <strong>cumulative impacts ordinance</strong> that considers pollution burden before approving new facilities.</p>
+            <p>→ Sign up for notifications from your city's planning department, then attend <strong>public comment hearings</strong> for local industrial permits or zoning decisions — especially those affecting low-income or minority neighborhoods.</p>
+            <p>→ Check whether your city has an <strong>Environmental or Sustainability Commission</strong>. These bodies advise City Council and are often looking for engaged constituents to strengthen their case.</p>
+          </div>
+        </details>
+        <details class="group bg-white border border-sand rounded-2xl overflow-hidden">
+          <summary class="px-5 py-4 cursor-pointer font-semibold text-charcoal hover:text-terracotta transition-colors text-sm flex items-baseline justify-between gap-2 flex-wrap"><span>Civic Power: <em class="text-sm font-normal text-muted/60 ml-1">Vote, organize, and take a seat at the table</em></span><span class="text-xs text-muted/50 group-open:hidden">Read more ↓</span><span class="text-xs text-muted/50 hidden group-open:inline">Read less ↑</span></summary>
+          <div class="px-5 pb-4 space-y-1.5 text-sm text-muted">
+            <p>→ Register to vote and sign up for election reminders at <a href="https://www.vote.org/" target="_blank" class="text-terracotta underline hover:text-charcoal">Vote.org</a>. Use <a href="https://www.vote411.org/" target="_blank" class="text-terracotta underline hover:text-charcoal">VOTE411</a> to research every candidate on your ballot — not just the top of the ticket. School boards, City Councils, and utility boards matter enormously.</p>
+            <p>→ Volunteer for one local candidate whose platform prioritizes <strong>living wages</strong>, housing, or environmental justice. You'll get a script and a list — no experience needed, and in close local races, a single weekend of conversations can make a difference.</p>
+            <p>→ Run for something. Local offices are more accessible than most people think. Consider becoming a local party organizer — you'll have a direct say in which candidates make it onto the ballot.</p>
+            <p>→ Check if your city has a <strong>participatory budgeting</strong> program at <a href="https://www.participatorybudgeting.org/" target="_blank" class="text-terracotta underline hover:text-charcoal">participatorybudgeting.org</a>. If it does, show up, vote, and make sure your neighbors know about it. If your city doesn't have one yet, advocate for it — point to Denver and LA as models already working.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    // ── NAVIGATION ──
+    function navigate(page) {
+      revealObserver.disconnect();
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      const target = document.getElementById('page-' + page);
+      if (target) {
+        // Strip visible from all reveal elements on the new page
+        const allReveals = target.querySelectorAll(
+          '.reveal, .reveal-left, .reveal-right, .reveal-scale, .reveal-fade, .stagger-children'
+        );
+        allReveals.forEach(el => {
+          el.classList.remove('visible');
+          if (el.classList.contains('stagger-children')) {
+            Array.from(el.children).forEach(c => c.classList.remove('visible'));
+          }
+        });
+        target.classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        setTimeout(() => observeAllReveals(), 200);
+      }
+    }
+
+    // ── SMOOTH SCROLL TO SECTION ──
+    function scrollToSection(id) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    // ── CAROUSEL SCROLL ──
+    function scrollCarousel(carouselId, direction) {
+      const carousel = document.getElementById(carouselId);
+      if (!carousel) return;
+      const card = carousel.querySelector('.carousel-card');
+      if (!card) return;
+      const scrollAmount = card.offsetWidth + 24; // gap
+      carousel.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+    }
+
+    // ── CASE MODAL ──
+    function openCaseModal(id) {
+      const modal = document.getElementById(id);
+      if (modal) {
+        modal.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      }
+    }
+    function closeCaseModal(id) {
+      const modal = document.getElementById(id);
+      if (modal) {
+        modal.classList.remove('open');
+        document.body.style.overflow = '';
+      }
+    }
+    // Close modal on Escape
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.case-modal.open').forEach(m => {
+          m.classList.remove('open');
+        });
+        document.body.style.overflow = '';
+      }
+    });
+
+    // ── DOUGHNUT HOVER LOGIC ──
+    const dTitle = document.getElementById('ring-title');
+    const dSub = document.getElementById('ring-sub');
+    const chips = Array.from(document.querySelectorAll('.chip'));
+    let activeTimeouts = [];
+
+    const variations = {
+      default: {
+        title: "Hover on a<br>perspective",
+        sub: "that resonates with you",
+        chips: [],
+        showChips: false
+      },
+      conservative: {
+        title: "Long-term<br>Stewardship",
+        sub: "Preserving what we have",
+        chips: ["👨‍👩‍👧 Family Stability", "🏘️ Local Jobs", "🏪 Small Business Resilience", "🏗️ Lasting Infrastructure", "🌾 Food Security"],
+        showChips: true
+      },
+      independent: {
+        title: "Resilient<br>Stability",
+        sub: "Growth within limits",
+        chips: ["💡 Innovation", "🌿 Conservation", "🏢 Local Investment", "💼 Economic Opportunity", "🏠 Affordable Living"],
+        showChips: true
+      },
+      progressive: {
+        title: "Fairness<br>& Equity",
+        sub: "Dignity for everyone",
+        chips: ["💵 Living Wages", "🤝 Shared Wealth", "🌍 Climate Action", "⚖️ Human Rights", "🏥 Accessible Care"],
+        showChips: true
+      }
+    };
+
+    function updateDoughnut(mode) {
+      const config = variations[mode];
+      activeTimeouts.forEach(t => clearTimeout(t));
+      activeTimeouts = [];
+
+      if (dTitle) dTitle.style.opacity = 0;
+      if (dSub) dSub.style.opacity = 0;
+      chips.forEach(chip => chip.classList.remove('visible'));
+
+      const mainTimeout = setTimeout(() => {
+        if (dTitle) dTitle.innerHTML = config.title;
+        if (dSub) dSub.textContent = config.sub;
+        if (dTitle) dTitle.style.opacity = 1;
+        if (dSub) dSub.style.opacity = 1;
+
+        if (config.showChips) {
+          config.chips.forEach((text, i) => {
+            const chipTimeout = setTimeout(() => {
+              if (chips[i]) {
+                chips[i].textContent = text;
+                chips[i].classList.add('visible');
+              }
+            }, i * 65);
+            activeTimeouts.push(chipTimeout);
+          });
+        }
+      }, 120);
+      activeTimeouts.push(mainTimeout);
+    }
+    // ── SCROLL REVEAL ANIMATIONS ──
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          if (entry.target.classList.contains('stagger-children')) {
+            Array.from(entry.target.children).forEach((child, i) => {
+              setTimeout(() => child.classList.add('visible'), i * 100);
+            });
+          }
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+
+    function observeAllReveals() {
+      document.querySelectorAll(
+        '.reveal, .reveal-left, .reveal-right, .reveal-scale, .reveal-fade, .stagger-children'
+      ).forEach(el => revealObserver.observe(el));
+    }
+
+    // Double rAF ensures browser paints initial opacity:0 before revealing
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => { observeAllReveals(); });
+    });
+  </script>
+</body>
+</html>
