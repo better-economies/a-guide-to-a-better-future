@@ -62,29 +62,53 @@
     }
     .perspective-card:hover { transform: translateY(-4px); }
 
-    /* See-more popout — extends right from the card edge on hover */
-    .card-see-more-tag {
-      position: absolute;
-      left: 100%;
-      top: 50%;
-      transform: translateY(-50%) translateX(-85%);
-      padding: 0.55rem 0.9rem;
-      border-radius: 0 0.45rem 0.45rem 0;
-      font-size: 0.72rem;
+    /* Unified bottom expand panel — hover on desktop, prime on mobile */
+    .card-action-panel {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .card-action-panel > div {
+      overflow: hidden;
+    }
+    .card-action-inner {
+      padding: 0.6rem 1rem 0 1rem;
+      font-size: 0.75rem;
       font-weight: 600;
-      white-space: nowrap;
-      opacity: 0;
-      transition: all 0.35s cubic-bezier(0.25, 1, 0.5, 1);
-      pointer-events: none;
-      z-index: 5;
+      border-top: 1px solid #EDE8D5;
+      margin-top: 0.5rem;
       letter-spacing: 0.01em;
     }
-    .perspective-card:hover .card-see-more-tag {
-      opacity: 1;
-      transform: translateY(-50%) translateX(0);
+    /* Desktop: expand on hover */
+    @media (hover: hover) and (pointer: fine) {
+      .perspective-card:hover .card-action-panel {
+        grid-template-rows: 1fr;
+      }
     }
-    @media (max-width: 1023px) {
-      .card-see-more-tag { display: none; }
+    /* Mobile: expand only when primed (two-tap) */
+    @media (hover: none) and (pointer: coarse) {
+      .perspective-card.primed .card-action-panel {
+        grid-template-rows: 1fr;
+      }
+    }
+
+    /* Two-tap primed glow */
+    .perspective-card.primed {
+      border-color: #B8953E !important;
+      box-shadow: 0 0 0 2px rgba(184,149,62,0.25), 0 4px 20px rgba(0,0,0,0.06);
+      animation: prime-glow 2s ease-in-out infinite;
+    }
+    @keyframes prime-glow {
+      0%, 100% { box-shadow: 0 0 0 2px rgba(184,149,62,0.25), 0 4px 20px rgba(0,0,0,0.06); }
+      50%      { box-shadow: 0 0 0 5px rgba(184,149,62,0.12), 0 6px 24px rgba(0,0,0,0.1); }
+    }
+
+    /* Smaller chip labels on narrow screens so they fit */
+    @media (max-width: 420px) {
+      .chip {
+        font-size: 0.65rem;
+        padding: 0.3rem 0.65rem;
+      }
     }
 
     /* Carousel */
@@ -272,49 +296,84 @@
             A better future looks different for each of us, until you look at what we all depend on: resilient economies, stable communities, work that sustains us and our families, and the ability to plan beyond next month's bills.
           </p>
 
-          <p class="text-lg uppercase tracking-widest text-muted/60 mb-5 font-bold reveal-fade" style="animation-delay: 0.25s;">
-            <span class="hidden lg:inline">Choose your perspective:</span>
-            <span class="lg:hidden">Tap to see more about a perspective</span>
-          </p>
+          <p class="text-lg uppercase tracking-widest text-muted/60 mb-5 font-bold reveal-fade" style="animation-delay: 0.25s;">Choose your perspective:</p>
+
+          <!-- Mobile Doughnut (hidden on desktop) -->
+          <div class="lg:hidden flex justify-center mb-6 reveal-scale">
+            <div class="relative w-[340px] h-[340px] sm:w-[390px] sm:h-[390px]">
+              <div class="chip" id="m-chip-1" style="top:0%; left:5%;"></div>
+              <div class="chip" id="m-chip-2" style="top:16%; right:-8%;"></div>
+              <div class="chip" id="m-chip-3" style="bottom:20%; right:-8%;"></div>
+              <div class="chip" id="m-chip-4" style="bottom:2%; left:2%;"></div>
+              <div class="chip" id="m-chip-5" style="top:55%; left:-10%;"></div>
+              <svg viewBox="0 0 340 340" class="w-full h-full">
+                <circle cx="170" cy="170" r="155" stroke="#5A7340" stroke-width="26" stroke-dasharray="8 4" opacity="0.25" fill="none"/>
+                <circle cx="170" cy="170" r="155" stroke="#5A7340" stroke-width="3" opacity="0.4" fill="none"/>
+                <circle cx="170" cy="170" r="115" stroke="#C7753A" stroke-width="26" opacity="0.12" fill="none"/>
+                <circle cx="170" cy="170" r="115" stroke="#C7753A" stroke-width="3" opacity="0.4" fill="none"/>
+                <circle cx="170" cy="170" r="70" fill="#2D4A22" opacity="0.05"/>
+              </svg>
+              <div class="absolute inset-0 flex flex-col items-center justify-center text-center p-8 pointer-events-none">
+                <span id="m-ring-title" class="font-serif text-lg sm:text-xl font-bold text-forest leading-tight transition-opacity duration-300">Tap on a<br>perspective</span>
+                <span id="m-ring-sub" class="text-[0.65rem] sm:text-xs text-muted uppercase tracking-[0.12em] mt-2 transition-opacity duration-300">to see what matters</span>
+              </div>
+            </div>
+          </div>
+
           <div class="flex flex-col gap-4 max-w-md mx-auto lg:mx-0">
 
             <!-- Perspective 1: Conservative -->
-           <div class="perspective-card group bg-white border border-sand rounded-2xl p-5 cursor-pointer hover:border-forest hover:shadow-xl hover:shadow-forest/5 flex items-center gap-4 relative"
-                 onclick="navigate('conservative')"
+           <div class="perspective-card group bg-white border border-sand rounded-2xl p-5 cursor-pointer hover:border-forest hover:shadow-xl hover:shadow-forest/5 flex flex-col relative"
+                 data-perspective="conservative"
+                 onclick="handleCardTap('conservative')"
                  onmouseenter="updateDoughnut('conservative')"
                  onmouseleave="updateDoughnut('default')">
-              <span class="text-2xl flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center bg-forest/5 group-hover:bg-forest/10 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
-              <div class="flex-1 min-w-0">
-                <div class="font-semibold text-forest">I want to strengthen the foundations of our communities.</div>
-                <div class="text-sm text-muted/70 mt-0.5">Explore how we can better steward our communities and resources, so they endure.</div>
+              <div class="flex items-center gap-4">
+                <span class="text-2xl flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center bg-forest/5 group-hover:bg-forest/10 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+                <div class="flex-1 min-w-0">
+                  <div class="font-semibold text-forest">I want to strengthen the foundations of our communities.</div>
+                  <div class="text-sm text-muted/70 mt-0.5">Explore how we can better steward our communities and resources, so they endure.</div>
+                </div>
               </div>
-              <span class="card-see-more-tag bg-forest text-white">Click to see more</span>
+              <div class="card-action-panel">
+                <div><div class="card-action-inner text-forest">Click to explore this perspective →</div></div>
+              </div>
             </div>
 
             <!-- Perspective 2: Independent -->
-            <div class="perspective-card group bg-white border border-sand rounded-2xl p-5 cursor-pointer hover:border-gold hover:shadow-xl hover:shadow-gold/5 flex items-center gap-4 relative"
-                 onclick="navigate('independent')"
+            <div class="perspective-card group bg-white border border-sand rounded-2xl p-5 cursor-pointer hover:border-gold hover:shadow-xl hover:shadow-gold/5 flex flex-col relative"
+                 data-perspective="independent"
+                 onclick="handleCardTap('independent')"
                  onmouseenter="updateDoughnut('independent')"
                  onmouseleave="updateDoughnut('default')">
-              <span class="text-2xl flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center bg-gold/5 group-hover:bg-gold/10 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M5 6l-2 8h4zM19 6l-2 8h4zM8 20h8"/><line x1="3" y1="9" x2="21" y2="9"/></svg></span>
-              <div class="flex-1 min-w-0">
-                <div class="font-semibold text-charcoal group-hover:text-gold transition-colors">I want a stable, innovative economy.</div>
-                <div class="text-sm text-muted/70 mt-0.5">Explore how we can build an economy that balances growth, resilience and opportunity.</div>
+              <div class="flex items-center gap-4">
+                <span class="text-2xl flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center bg-gold/5 group-hover:bg-gold/10 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M5 6l-2 8h4zM19 6l-2 8h4zM8 20h8"/><line x1="3" y1="9" x2="21" y2="9"/></svg></span>
+                <div class="flex-1 min-w-0">
+                  <div class="font-semibold text-charcoal group-hover:text-gold transition-colors">I want a stable, innovative economy.</div>
+                  <div class="text-sm text-muted/70 mt-0.5">Explore how we can build an economy that balances growth, resilience and opportunity.</div>
+                </div>
               </div>
-              <span class="card-see-more-tag bg-gold text-white">Click to see more</span>
+              <div class="card-action-panel">
+                <div><div class="card-action-inner text-gold">Click to explore this perspective →</div></div>
+              </div>
             </div>
 
             <!-- Perspective 3: Progressive -->
-            <div class="perspective-card group bg-white border border-sand rounded-2xl p-5 cursor-pointer hover:border-terracotta hover:shadow-xl hover:shadow-terracotta/5 flex items-center gap-4 relative"
-                 onclick="navigate('progressive')"
+            <div class="perspective-card group bg-white border border-sand rounded-2xl p-5 cursor-pointer hover:border-terracotta hover:shadow-xl hover:shadow-terracotta/5 flex flex-col relative"
+                 data-perspective="progressive"
+                 onclick="handleCardTap('progressive')"
                  onmouseenter="updateDoughnut('progressive')"
                  onmouseleave="updateDoughnut('default')">
-              <span class="text-2xl flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center bg-terracotta/5 group-hover:bg-terracotta/10 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2l-9 9"/><path d="M14 11L3 21l3-3"/><path d="M15 7l-2 2-3-3 5-5 6 2-3 1z"/><path d="M9 15l-3 3"/></svg></span>
-              <div class="flex-1 min-w-0">
-                <div class="font-semibold text-charcoal group-hover:text-terracotta transition-colors">I want to live in a fairer, more equitable society.</div>
-                <div class="text-sm text-muted/70 mt-0.5">Explore how we can build economic systems that work for everyone.</div>
+              <div class="flex items-center gap-4">
+                <span class="text-2xl flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center bg-terracotta/5 group-hover:bg-terracotta/10 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2l-9 9"/><path d="M14 11L3 21l3-3"/><path d="M15 7l-2 2-3-3 5-5 6 2-3 1z"/><path d="M9 15l-3 3"/></svg></span>
+                <div class="flex-1 min-w-0">
+                  <div class="font-semibold text-charcoal group-hover:text-terracotta transition-colors">I want to live in a fairer, more equitable society.</div>
+                  <div class="text-sm text-muted/70 mt-0.5">Explore how we can build economic systems that work for everyone.</div>
+                </div>
               </div>
-              <span class="card-see-more-tag bg-terracotta text-white">Click to see more</span>
+              <div class="card-action-panel">
+                <div><div class="card-action-inner text-terracotta">Click to explore this perspective →</div></div>
+              </div>
             </div>
           </div>
         </div>
@@ -1321,13 +1380,17 @@ Even in more recent years, despite economic shifts and pandemic disruptions, hun
     // ── DOUGHNUT HOVER LOGIC ──
     const dTitle = document.getElementById('ring-title');
     const dSub = document.getElementById('ring-sub');
-    const chips = Array.from(document.querySelectorAll('.chip'));
+    const dChips = Array.from(document.querySelectorAll('#page-home .chip:not([id^="m-"])'));
+    // Mobile doughnut elements
+    const mTitle = document.getElementById('m-ring-title');
+    const mSub = document.getElementById('m-ring-sub');
+    const mChips = Array.from(document.querySelectorAll('[id^="m-chip-"]'));
     let activeTimeouts = [];
 
     const variations = {
       default: {
-        title: "Hover on a<br>perspective",
-        sub: "that resonates with you",
+        title: "Tap on a<br>perspective",
+        sub: "to see what matters",
         chips: [],
         showChips: false
       },
@@ -1356,22 +1419,33 @@ Even in more recent years, despite economic shifts and pandemic disruptions, hun
       activeTimeouts.forEach(t => clearTimeout(t));
       activeTimeouts = [];
 
+      // Desktop
       if (dTitle) dTitle.style.opacity = 0;
       if (dSub) dSub.style.opacity = 0;
-      chips.forEach(chip => chip.classList.remove('visible'));
+      dChips.forEach(chip => chip.classList.remove('visible'));
+      // Mobile
+      if (mTitle) mTitle.style.opacity = 0;
+      if (mSub) mSub.style.opacity = 0;
+      mChips.forEach(chip => chip.classList.remove('visible'));
 
       const mainTimeout = setTimeout(() => {
-        if (dTitle) dTitle.innerHTML = config.title;
-        if (dSub) dSub.textContent = config.sub;
-        if (dTitle) dTitle.style.opacity = 1;
-        if (dSub) dSub.style.opacity = 1;
+        // Desktop
+        if (dTitle) { dTitle.innerHTML = config.title; dTitle.style.opacity = 1; }
+        if (dSub) { dSub.textContent = config.sub; dSub.style.opacity = 1; }
+        // Mobile
+        if (mTitle) { mTitle.innerHTML = config.title; mTitle.style.opacity = 1; }
+        if (mSub) { mSub.textContent = config.sub; mSub.style.opacity = 1; }
 
         if (config.showChips) {
           config.chips.forEach((text, i) => {
             const chipTimeout = setTimeout(() => {
-              if (chips[i]) {
-                chips[i].textContent = text;
-                chips[i].classList.add('visible');
+              if (dChips[i]) {
+                dChips[i].textContent = text;
+                dChips[i].classList.add('visible');
+              }
+              if (mChips[i]) {
+                mChips[i].textContent = text;
+                mChips[i].classList.add('visible');
               }
             }, i * 65);
             activeTimeouts.push(chipTimeout);
@@ -1379,6 +1453,46 @@ Even in more recent years, despite economic shifts and pandemic disruptions, hun
         }
       }, 120);
       activeTimeouts.push(mainTimeout);
+    }
+
+    // ── MOBILE CARD TAP: two-tap — first primes, second navigates ──
+    let primedCard = null;
+    const isTouchDevice = !window.matchMedia('(hover: hover)').matches;
+
+    function handleCardTap(perspective) {
+      if (isTouchDevice) {
+        if (primedCard === perspective) {
+          // Second tap — navigate
+          clearCardPrime();
+          navigate(perspective);
+        } else {
+          // First tap — prime this card
+          clearCardPrime();
+          primedCard = perspective;
+          updateDoughnut(perspective);
+          primeCardUI(perspective);
+        }
+      } else {
+        navigate(perspective);
+      }
+    }
+
+    function primeCardUI(perspective) {
+      const card = document.querySelector(`[data-perspective="${perspective}"]`);
+      if (card) {
+        card.classList.add('primed');
+        const inner = card.querySelector('.card-action-inner');
+        if (inner) inner.textContent = 'Tap again to explore this perspective →';
+      }
+    }
+
+    function clearCardPrime() {
+      primedCard = null;
+      document.querySelectorAll('.perspective-card.primed').forEach(c => {
+        c.classList.remove('primed');
+        const inner = c.querySelector('.card-action-inner');
+        if (inner) inner.textContent = 'Click to explore this perspective →';
+      });
     }
     // ── SCROLL REVEAL ANIMATIONS ──
     const revealObserver = new IntersectionObserver((entries) => {
