@@ -551,7 +551,7 @@ img{max-width:100%;display:block;}
           </svg>
           <div class="doughnut-center">
             <span class="dt-title" id="dtTitle">Hover on a<br>perspective</span>
-            <span class="dt-sub" id="dtSub">that resonates with you</span>
+            <span class="dt-sub" id="dtSub">to see what matters</span>
           </div>
         </div>
       </div>
@@ -985,7 +985,7 @@ function updateDoughnut(key){
     dtTitle.style.opacity=0; dtSub.style.opacity=0;
     if(!isTouchDevice){
       const t=setTimeout(()=>{
-        dtTitle.innerHTML='Hover on a<br>perspective'; dtSub.textContent='that resonates with you';
+        dtTitle.innerHTML='Hover on a<br>perspective'; dtSub.textContent='to see what matters';
         dtTitle.style.opacity=1; dtSub.style.opacity=1;
       },120);
       doughnutTimers.push(t);
