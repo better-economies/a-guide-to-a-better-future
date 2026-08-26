@@ -54,7 +54,7 @@ a{color:inherit;}
   color:var(--accent);
   font-weight:600;
 }
-button{font-family:inherit;cursor:pointer;}
+button{font-family:inherit;cursor:pointer;color:inherit;background:none;border:none;-webkit-appearance:none;appearance:none;}
 .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px;}
 img{max-width:100%;display:block;}
 :focus-visible{outline:3px solid var(--data);outline-offset:2px;}
@@ -981,13 +981,6 @@ function updateDoughnut(key){
   if(!key){
     doughnutEl.style.setProperty('--doughnut-c','var(--mustard)');
     dtTitle.style.opacity=0; dtSub.style.opacity=0;
-    const t=setTimeout(()=>{
-      if(isTouchDevice){
-        dtTitle.innerHTML='Tap on a<br>perspective'; dtSub.textContent='to see what matters';
-        dtTitle.style.opacity=1; dtSub.style.opacity=1;
-      }
-    },120);
-    doughnutTimers.push(t);
     return;
   }
   const d = DATA[key];
@@ -1204,7 +1197,7 @@ function navigate(key, sectionId){
   if(key==='home'){
     document.getElementById('home').classList.add('active');
     location.hash = '#/';
-    updateDoughnut(null);
+    stopAutoplay();
     startAutoplay();
   } else {
     document.getElementById('p-'+key).classList.add('active');
