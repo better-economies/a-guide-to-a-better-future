@@ -416,8 +416,8 @@ img{max-width:100%;display:block;}
 .action-list{list-style:none;margin:0;padding:0 20px 20px 60px;display:flex;flex-direction:column;gap:12px;}
 .action-list li{font-size:1.02rem;line-height:1.55;color:var(--ink-soft);position:relative;}
 .action-list li::before{content:"→";position:absolute;left:-20px;color:var(--accent);}
-.action-list a{color:var(--data);text-decoration:underline;text-decoration-color:var(--line-strong);text-underline-offset:2px;}
-.action-list a:hover{text-decoration-color:var(--data);}
+.action-list a{color:#4A5754 !important;text-decoration:underline;text-decoration-color:var(--line-strong);text-underline-offset:2px;}
+.action-list a:hover{color:#4A5754 !important;text-decoration-color:#4A5754;}
 .action-list b{color:var(--ink);}
 
 /* footer nav within perspective */
@@ -455,7 +455,7 @@ img{max-width:100%;display:block;}
 .modal-body h3{font-size:1.4rem;margin:8px 0 16px;}
 .modal-body p{color:var(--ink-soft);font-size:.96rem;margin-bottom:12px;}
 .modal-body .sources{font-size:.82rem;margin-top:16px;color:var(--ink-soft);}
-.modal-body .sources a{color:var(--data);}
+.modal-body .sources a{color:#4A5754 !important;text-decoration:underline;}
 .modal-close{
   position:sticky;top:0;float:right;margin:14px 14px 0 0;
   width:34px;height:34px;border-radius:50%;border:1px solid var(--line-strong);
@@ -1235,8 +1235,24 @@ document.body.addEventListener('click', e=>{
     const grid = exnav.closest('.examples-carousel').querySelector('.examples-grid');
     const card = grid.querySelector('.example-card');
     const step = card ? card.getBoundingClientRect().width + 16 : grid.clientWidth * 0.82;
-    grid.scrollBy({left: exnav.getAttribute('data-exnav')==='prev' ? -step : step, behavior:'smooth'});
+    const direction = exnav.getAttribute('data-exnav');
+    const scrollAmount = direction === 'prev' ? -step : step;
+    const maxScroll = grid.scrollWidth - grid.clientWidth;
+    const newScroll = Math.max(0, Math.min(maxScroll, grid.scrollLeft + scrollAmount));
+    if(newScroll !== grid.scrollLeft){
+      grid.scrollBy({left: newScroll - grid.scrollLeft, behavior:'smooth'});
+    }
     return;
+  }
+  // Limit carousel scroll on mobile (touch)
+  const carousel = e.target.closest('.examples-carousel');
+  if(carousel && e.touches){
+    const grid = carousel.querySelector('.examples-grid');
+    if(grid){
+      const maxScroll = grid.scrollWidth - grid.clientWidth;
+      if(grid.scrollLeft > maxScroll) grid.scrollLeft = maxScroll;
+      if(grid.scrollLeft < 0) grid.scrollLeft = 0;
+    }
   }
   const tmodal = e.target.closest('[data-tmodal]');
   if(tmodal){
@@ -1340,6 +1356,15 @@ function onScroll(){
   }
 }
 window.addEventListener('scroll', onScroll, {passive:true});
+
+/* Limit carousel scroll on mobile */
+document.querySelectorAll('.examples-grid').forEach(grid => {
+  grid.addEventListener('scroll', () => {
+    const maxScroll = grid.scrollWidth - grid.clientWidth;
+    if(grid.scrollLeft > maxScroll) grid.scrollLeft = maxScroll;
+    if(grid.scrollLeft < 0) grid.scrollLeft = 0;
+  }, {passive:true});
+});
 
 /* ---------------- INITIAL ROUTE ---------------- */
 function routeFromHash(){
