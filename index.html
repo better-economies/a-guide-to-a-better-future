@@ -965,6 +965,8 @@ ORDER.forEach(key=>{
 
 document.getElementById('brandBtn').addEventListener('click',()=>navigate('home'));
 
+const isTouchDevice = !window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
 /* ---------------- DOUGHNUT HOVER VISUAL ---------------- */
 const doughnutEl = document.getElementById('doughnut');
 const dtTitle = document.getElementById('dtTitle');
@@ -981,6 +983,13 @@ function updateDoughnut(key){
   if(!key){
     doughnutEl.style.setProperty('--doughnut-c','var(--mustard)');
     dtTitle.style.opacity=0; dtSub.style.opacity=0;
+    if(!isTouchDevice){
+      const t=setTimeout(()=>{
+        dtTitle.innerHTML='Hover on a<br>perspective'; dtSub.textContent='that resonates with you';
+        dtTitle.style.opacity=1; dtSub.style.opacity=1;
+      },120);
+      doughnutTimers.push(t);
+    }
     return;
   }
   const d = DATA[key];
@@ -1265,8 +1274,6 @@ document.body.addEventListener('click', e=>{
   }
   document.querySelectorAll('.block-square.open').forEach(el=>el.classList.remove('open'));
 });
-
-const isTouchDevice = !window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
 document.querySelectorAll('.subnav a').forEach(a=>{
   a.addEventListener('click', e=>{
