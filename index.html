@@ -408,7 +408,7 @@ img{max-width:100%;display:block;}
 }
 .action-num{font-family:'IBM Plex Mono',monospace;font-size:.75rem;color:var(--accent);flex:none;width:24px;}
 .action-trigger-text{flex:1;}
-.action-trigger h4{font-size:1.02rem;}
+.action-trigger h4{font-size:1.02rem;color:inherit !important;}
 .action-trigger .sub{font-size:.94rem;color:var(--ink-soft);font-style:italic;margin-top:2px;}
 .action-chevron{width:16px;height:16px;flex:none;color:var(--accent);transition:transform .2s;}
 .action-cat[data-open="true"] .action-chevron{transform:rotate(180deg);}
@@ -982,8 +982,10 @@ function updateDoughnut(key){
     doughnutEl.style.setProperty('--doughnut-c','var(--mustard)');
     dtTitle.style.opacity=0; dtSub.style.opacity=0;
     const t=setTimeout(()=>{
-      dtTitle.innerHTML='Hover on a<br>perspective'; dtSub.textContent='that resonates with you';
-      dtTitle.style.opacity=1; dtSub.style.opacity=1;
+      if(isTouchDevice){
+        dtTitle.innerHTML='Tap on a<br>perspective'; dtSub.textContent='to see what matters';
+        dtTitle.style.opacity=1; dtSub.style.opacity=1;
+      }
     },120);
     doughnutTimers.push(t);
     return;
