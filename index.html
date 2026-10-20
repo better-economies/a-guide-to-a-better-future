@@ -1383,13 +1383,6 @@ document.querySelectorAll('.examples-grid').forEach(grid => {
 /* ---------------- INITIAL ROUTE ---------------- */
 function routeFromHash(){
   const parts = location.hash.replace('#/','').split('/').filter(Boolean);
-  if (typeof gtag === 'function') {
-    gtag('event', 'page_view', {
-      page_title: document.title + (parts.length ? ' – ' + parts.join(' / ') : ''),
-      page_location: location.href,
-      page_path: '/' + parts.join('/')
-    });
-  }
 if(parts.length===0){ navigate('home'); }
 else { navigate(parts[0], parts[1]); } 
 }
